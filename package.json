@@ -24,8 +24,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"bootstrap": "4.6",
+		"bootstrap": "^5.2.3",
 		"firebase": "^9.17.2",
-		"sveltestrap": "^4.2.1"
+		"sveltestrap": "^5.10.0"
 	}
 }

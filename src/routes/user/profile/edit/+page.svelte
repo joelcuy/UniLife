@@ -1,5 +1,5 @@
 <script>
-	import { FormGroup, Button, Image, Form, Label, Input } from 'sveltestrap';
+	import { FormGroup, Button, Form, Label, Input } from 'sveltestrap';
 	import { goto } from '$app/navigation';
 	import { ROUTES } from '../../../routelist';
 
