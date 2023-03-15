@@ -4,7 +4,10 @@ import adapter from '@sveltejs/adapter-auto';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: preprocess({
-		scss: true
+		// scss: true
+		scss: {
+            prependData: `@import './src/styles/custom.scss';`
+        }
 	}),
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
