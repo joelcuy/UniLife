@@ -24,7 +24,7 @@
 		<Input type="password" name="password" id="password" bind:value={password} />
 	</FormGroup>
 	<FormGroup>
-		<Button block on:click={dispatchLoginData}>Login</Button>
+		<Button color="primary" block on:click={dispatchLoginData}>Login</Button>
 	</FormGroup>
 	<a href="/forgot_password">Forgotten password?</a>
 	<!-- {#if loading}

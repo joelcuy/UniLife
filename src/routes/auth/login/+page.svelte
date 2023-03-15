@@ -26,7 +26,7 @@
 				})
 				.catch((error) => {
 					console.log(error.message);
-					errorMessage = "Authentication failed";
+					errorMessage = 'Authentication failed';
 					isError = true;
 				});
 		}
@@ -70,6 +70,7 @@
 <!-- TODO Change this button to secondary -->
 <FormGroup>
 	<Button
+		color="primary"
 		id="login-button"
 		block
 		on:click={() => {

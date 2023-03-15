@@ -19,5 +19,5 @@
 
 <h1>FUCK</h1>
 <FormGroup>
-	<Button id="login-button" block on:click={signout}>SignOut</Button>
+	<Button color="primary" id="login-button" block on:click={signout}>SignOut</Button>
 </FormGroup>

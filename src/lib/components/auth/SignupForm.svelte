@@ -40,7 +40,7 @@
 		/>
 	</FormGroup>
 	<FormGroup>
-		<Button block on:click={dispatchSignupData}>Sign Up</Button>
+		<Button color="primary" block on:click={dispatchSignupData}>Sign Up</Button>
 	</FormGroup>
 </Form>
 

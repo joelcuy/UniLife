@@ -1,6 +1,10 @@
 <script>
 	import SignUp from '../../../lib/components/auth/SignupForm.svelte';
-	import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification} from 'firebase/auth';
+	import {
+		createUserWithEmailAndPassword,
+		updateProfile,
+		sendEmailVerification
+	} from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	// import { auth, userDoc } from '../../../Firebase';
 	import { auth } from '../../../Firebase';
@@ -35,11 +39,6 @@
 				});
 
 			// try {
-			// 	let user = await createUserWithEmailAndPassword(
-			// 		auth,
-			// 		event.detail.email,
-			// 		event.detail.password
-			// 	);
 			// 	await updateProfile(user.user, { displayName: event.detail.username });
 			// 	await setDoc(userDoc(auth.currentUser.uid), {
 			// 		username: user.user.displayName,
@@ -98,6 +97,7 @@
 <!-- TODO Change this button to secondary -->
 <FormGroup>
 	<Button
+		color="primary"
 		id="login-button"
 		block
 		on:click={() => {
