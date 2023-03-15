@@ -35,16 +35,14 @@
 	</a>
 </nav>
 
-<style lang="scss">
+<style>
 	.nav {
 		position: fixed;
 		bottom: 0;
 		width: 100%;
-		height: 3rem;
-		/* box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); */
-		/* background-color: #eb1a1a; */
+		box-shadow: 0px 0px 8px rgba(0, 0, 0);
+		background-color: #ffffff;
 		display: flex;
-		overflow-x: auto;
 	}
 
 	.nav-link {
@@ -57,7 +55,7 @@
 		overflow: hidden;
 		white-space: nowrap;
 		font-family: sans-serif;
-		font-size: 0.8rem;
+		font-size: 1rem;
 		color: black;
 		/* text-decoration: none; */
 		/* -webkit-tap-highlight-color: transparent; */
@@ -69,6 +67,6 @@
 	}
 
 	.nav-link-active {
-		color: #009578;
+		color: var(--bs-primary);
 	}
 </style>
