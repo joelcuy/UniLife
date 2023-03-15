@@ -1,7 +1,48 @@
 <script>
-	import { FormGroup, Button} from 'sveltestrap';
-    import { goto } from '$app/navigation';
+	import { FormGroup, Button } from 'sveltestrap';
+	import { getStores } from '$app/stores';
+	import { auth } from '../../../Firebase';
+	import { app } from '../../../Firebase';
+	import { onMount } from 'svelte';
+	import { signOut, onAuthStateChanged } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 	import { ROUTES } from '../../routelist';
+	import { currentUserData } from '../../../stores';
+
+	// Initialize Cloud Firestore and get a reference to the service
+	const db = getFirestore(app);
+	let userData = {};
+
+	let userUID;
+
+	onMount(async () => {
+		console.log($currentUserData);
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				// User is signed in, read data from Firestore
+				userUID = user.uid;
+				try {
+					const userRef = doc(db, 'users', userUID);
+					const userDocSnap = await getDoc(userRef);
+
+					if (userDocSnap.exists()) {
+						console.log('Document data:', userDocSnap.data());
+						userData = userDocSnap.data();
+						currentUserData.set({ ...userData, uid: userUID });
+					} else {
+						// doc.data() will be undefined in this case
+						console.log('No such document!');
+					}
+					console.log('Successful data read from Firestore');
+				} catch (error) {
+					console.error('Error reading user data from Firestore:', error);
+				}
+			} else {
+				console.log('no current user');
+			}
+		});
+	});
 </script>
 
 <!-- <div class="mask">
@@ -19,21 +60,18 @@
 		/>
 	</div>
 
-	<h1>Joel Cheah</h1>
+	<h1>{userData.name}</h1>
 	<br />
 	<h5>Education Institution</h5>
-	<p>HELP University</p>
+	<p>{userData.education_institution}</p>
 	<h5>Course of Study</h5>
-	<p>BSc. Computer Science</p>
+	<p>{userData.course}</p>
 	<h5>Bio</h5>
-	<p>
-		Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, iusto fugiat odio cum
-		exercitationem omnis perferendis nisi eos ipsum natus! Est dicta ea eum dignissimos asperiores
-		nostrum repellendus beatae sapiente.
-	</p>
+	<p>{userData.bio}</p>
 
 	<FormGroup>
 		<Button
+			color="primary"
 			id="login-button"
 			block
 			on:click={() => {
@@ -47,7 +85,7 @@
 
 <style>
 	.page-container {
-		padding: 2rem;
+		padding: 1rem;
 	}
 
 	h1 {

@@ -20,8 +20,14 @@
 	} from 'sveltestrap';
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { page } from '$app/stores';
+	import { app } from '../Firebase';
 	import { ROUTES } from './routelist';
 	import { Col, Container, Row } from 'sveltestrap';
+	import { currentUserData } from '../stores';
+	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+
+	// Initialize Cloud Firestore and get a reference to the service
+	// const db = getFirestore(app);
 
 	let showAlert = false;
 
@@ -35,19 +41,34 @@
 	let timer;
 	$: displayCooldownCounter = `(${cooldownCounter.toString()}s)`;
 
+	let userData;
 	onMount(() => {
-		onAuthStateChanged(auth, (user) => {
+		onAuthStateChanged(auth, async (user) => {
 			console.log('user state change');
 			if (user) {
-				console.log(user);
 				if (user.emailVerified) {
+					// try {
+					// 	const userRef = doc(db, 'users', user.uid);
+					// 	const userDocSnap = await getDoc(userRef);
+
+					// 	if (userDocSnap.exists()) {
+					// 		console.log('Document data:', userDocSnap.data());
+					// 		userData = userDocSnap.data();
+					// 	} else {
+					// 		// doc.data() will be undefined in this case
+					// 		console.log('No such document!');
+					// 	}
+					// 	console.log('Successful data read from Firestore');
+					// } catch (error) {
+					// 	console.error('Error reading user data from Firestore:', error);
+					// }
+					// currentUserData.set(userData);
 					goto('/user/feed');
 				}
-				// ...
 			} else {
 				// If not logged in, redirect to login
 				console.log('no current user');
-				// goto(ROUTES.login);
+				goto(ROUTES.login);
 			}
 		});
 	});
@@ -119,12 +140,15 @@
 			<Row>
 				<Col xs="12" md="6">
 					<FormGroup>
-						<Button id="logout-button" block on:click={signout}>Back to Login</Button>
+						<Button color="primary" id="logout-button" block on:click={signout}
+							>Back to Login</Button
+						>
 					</FormGroup>
 				</Col>
 				<Col xs="12" md="6">
 					<FormGroup>
 						<Button
+							color="primary"
 							disabled={isCooldown}
 							id="login-button"
 							block
@@ -169,6 +193,4 @@
 		border-radius: 10px;
 		align-items: center;
 	}
-
-	
 </style>
