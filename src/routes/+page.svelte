@@ -23,6 +23,8 @@
 	import { Col, Container, Row } from 'sveltestrap';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 	import { currentUserData } from '../lib/stores';
+	import CustomCard from '../lib/components/CustomCard.svelte';
+	import { getUserRole } from '../lib/auth';
 
 	// Initialize Cloud Firestore and get a reference to the service
 	// const db = getFirestore(app);
@@ -39,12 +41,13 @@
 	let timer;
 	$: displayCooldownCounter = `(${cooldownCounter.toString()}s)`;
 
-	let userData;
+	// let userData;
 	onMount(() => {
 		onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				if (user.emailVerified) {
-					switch ($currentUserData.role) {
+					let userRole = await getUserRole(user.uid);
+					switch (userRole) {
 						case 'student':
 							goto(ROUTES.feed);
 							break;
@@ -111,7 +114,7 @@
 <!-- This page is used for logged in users but unable to access content -->
 <!-- Reasons: Unverified Email -->
 <div class="page-container">
-	<div class="card-layer">
+	<CustomCard>
 		<div class="width-limiter">
 			<!-- TODO when firebase email got error handle it -->
 			<Alert isOpen={showAlert} color="success">A verification link has been emailed to you!</Alert>
@@ -144,9 +147,8 @@
 					</FormGroup>
 				</Col>
 			</Row>
-			<!-- TODO consider text and anchor tag design for login link -->
 		</div>
-	</div>
+	</CustomCard>
 </div>
 
 <style>
@@ -155,7 +157,7 @@
 		flex-direction: column;
 		height: 100vh;
 		justify-content: center;
-		background-color: rgba(227, 231, 235);
+		/* background-color: rgba(227, 231, 235); */
 	}
 
 	.header {
@@ -164,17 +166,5 @@
 
 	.width-limiter {
 		width: 75%;
-	}
-
-	.card-layer {
-		display: flex;
-		margin: 0 auto;
-		flex-direction: column;
-		row-gap: 16px;
-		padding: 32px 24px;
-		background-color: rgba(255, 255, 255, 0.75);
-		width: 75%;
-		border-radius: 10px;
-		align-items: center;
 	}
 </style>

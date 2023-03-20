@@ -3,37 +3,58 @@
 	import { page } from '$app/stores';
 	import { ROUTES } from '../../lib/routelist';
 	import { Navbar, NavbarBrand } from 'sveltestrap';
+	import { onMount } from 'svelte';
+	import { onAuthStateChanged } from 'firebase/auth';
+	import { getUserRole } from '$lib/auth';
+	import { auth } from '../../lib/Firebase';
+
+	let userRole;
+
+	onMount(() => {
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				userRole = await getUserRole(user.uid);
+			}
+		});
+	});
 </script>
 
-<Navbar
-	color={'primary'}
-	dark
->
-	<NavbarBrand class= "mx-auto" href={ROUTES.root}>UniLife</NavbarBrand>
-</Navbar>
-<slot />
-<nav class="nav">
-	<a href={ROUTES.feed} class="nav-link" class:nav-link-active={$page.url.pathname === ROUTES.feed}>
-		<Icon name="house-door-fill" />
-		<span class="nav-text"> Home </span>
-	</a>
-	<a
-		href={ROUTES.discover}
-		class="nav-link"
-		class:nav-link-active={$page.url.pathname === ROUTES.discover}
-	>
-		<Icon name="search" />
-		<span class="nav-text"> Discover </span>
-	</a>
-	<a
-		href={ROUTES.profile}
-		class="nav-link"
-		class:nav-link-active={$page.url.pathname === ROUTES.profile}
-	>
-		<Icon name="person-fill" />
-		<span class="nav-text"> Profile </span>
-	</a>
-</nav>
+<!-- Only allow access if role is organization -->
+{#if userRole === 'organization'}
+	<Navbar color={'primary'} dark>
+		<NavbarBrand class="mx-auto" href={ROUTES.root}>UniLife</NavbarBrand>
+	</Navbar>
+	<slot />
+	<nav class="nav">
+		<a
+			href={ROUTES.feed}
+			class="nav-link"
+			class:nav-link-active={$page.url.pathname === ROUTES.feed}
+		>
+			<Icon name="house-door-fill" />
+			<span class="nav-text"> Home </span>
+		</a>
+		<a
+			href={ROUTES.discover}
+			class="nav-link"
+			class:nav-link-active={$page.url.pathname === ROUTES.discover}
+		>
+			<Icon name="search" />
+			<span class="nav-text"> Discover </span>
+		</a>
+		<a
+			href={ROUTES.profile}
+			class="nav-link"
+			class:nav-link-active={$page.url.pathname === ROUTES.profile}
+		>
+			<Icon name="person-fill" />
+			<span class="nav-text"> Profile </span>
+		</a>
+	</nav>
+{:else}
+	<h1>Error 403: Access Denied</h1>
+	<p>You don't have permission to access this page.</p>
+{/if}
 
 <style>
 	.nav {

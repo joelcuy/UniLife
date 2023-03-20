@@ -11,9 +11,9 @@
 		margin: 0 auto;
 		flex-direction: column;
 		row-gap: 16px;
-		padding: 32px 16px;
+		padding: 32px 24px;
 		background-color: rgba(255, 255, 255, 0.75);
-		width: 85%;
+		width: 75%;
 		border-radius: 10px;
 	}
 </style>

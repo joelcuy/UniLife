@@ -24,7 +24,7 @@
 		flex-direction: column;
 		height: 100vh;
 		justify-content: center;
-		background-color: rgba(227, 231, 235);
+		/* background-color: rgba(227, 231, 235); */
 	}
 
 	.header {
