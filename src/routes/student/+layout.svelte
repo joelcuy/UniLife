@@ -1,7 +1,7 @@
 <script>
 	import { Icon } from 'sveltestrap';
 	import { page } from '$app/stores';
-	import { ROUTES } from '../routelist';
+	import { ROUTES } from '../../lib/routelist';
 	import { Navbar, NavbarBrand } from 'sveltestrap';
 </script>
 
@@ -9,16 +9,16 @@
 	color={'primary'}
 	dark
 >
-	<NavbarBrand class= "mx-auto" href="/">UniLife</NavbarBrand>
+	<NavbarBrand class= "mx-auto" href={ROUTES.root}>UniLife</NavbarBrand>
 </Navbar>
 <slot />
 <nav class="nav">
-	<a href="/user/feed" class="nav-link" class:nav-link-active={$page.url.pathname === ROUTES.feed}>
+	<a href={ROUTES.feed} class="nav-link" class:nav-link-active={$page.url.pathname === ROUTES.feed}>
 		<Icon name="house-door-fill" />
 		<span class="nav-text"> Home </span>
 	</a>
 	<a
-		href="/user/discover"
+		href={ROUTES.discover}
 		class="nav-link"
 		class:nav-link-active={$page.url.pathname === ROUTES.discover}
 	>
@@ -26,7 +26,7 @@
 		<span class="nav-text"> Discover </span>
 	</a>
 	<a
-		href="/user/profile"
+		href={ROUTES.profile}
 		class="nav-link"
 		class:nav-link-active={$page.url.pathname === ROUTES.profile}
 	>

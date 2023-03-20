@@ -1,16 +1,14 @@
 <script>
 	import { FormGroup, Button, Form, Label, Input } from 'sveltestrap';
 	import { getStores } from '$app/stores';
-	import { auth } from '../../../../Firebase';
-	import { app } from '../../../../Firebase';
+	import { app, auth } from '../../../../lib/Firebase';
 	import { onMount } from 'svelte';
 	import { signOut, onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import { ROUTES } from '../../../routelist';
+	import { ROUTES } from '../../../../lib/routelist';
 	import { page } from '$app/stores';
-
-	import { currentUserData } from '../../../../stores';
+	import { currentUserData } from '../../../../lib/stores';
 
 	// Initialize Cloud Firestore and get a reference to the service
 	const db = getFirestore(app);
@@ -29,25 +27,19 @@
 		bio = $currentUserData.bio;
 	});
 
-	// onMount(async () => {
-	// 	onAuthStateChanged(auth, async (user) => {
-	// 		if (user) {
-	// 			// User is signed in, read data from Firestore
-	// 		} else {
-	// 			console.log('no current user');
-	// 		}
-	// 	});
-	// });
-
 	async function handleSaveProfile() {
 		try {
 			const userRef = doc(db, 'users', userUID);
-			await setDoc(userRef, {
-				name: name,
-				education_institution: educationIns,
-				course: course,
-				bio: bio
-			});
+			await setDoc(
+				userRef,
+				{
+					name: name,
+					education_institution: educationIns,
+					course: course,
+					bio: bio
+				},
+				{ merge: true }
+			);
 			console.log('User data appended to Firestore');
 			goto(ROUTES.profile);
 		} catch (error) {

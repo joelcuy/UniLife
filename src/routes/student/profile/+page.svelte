@@ -1,34 +1,32 @@
 <script>
 	import { FormGroup, Button } from 'sveltestrap';
 	import { getStores } from '$app/stores';
-	import { auth } from '../../../Firebase';
-	import { app } from '../../../Firebase';
+	import { auth, app } from '../../../lib/Firebase';
 	import { onMount } from 'svelte';
 	import { signOut, onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import { ROUTES } from '../../routelist';
-	import { currentUserData } from '../../../stores';
+	import { ROUTES } from '../../../lib/routelist';
+	import { currentUserData } from '../../../lib/stores';
 
 	// Initialize Cloud Firestore and get a reference to the service
 	const db = getFirestore(app);
-	let userData = {};
-
-	let userUID;
 
 	onMount(async () => {
-		console.log($currentUserData);
+		// console.log($currentUserData);
 		onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				// User is signed in, read data from Firestore
-				userUID = user.uid;
+				const userUID = user.uid;
 				try {
 					const userRef = doc(db, 'users', userUID);
 					const userDocSnap = await getDoc(userRef);
 
 					if (userDocSnap.exists()) {
 						console.log('Document data:', userDocSnap.data());
-						userData = userDocSnap.data();
+						let userData = userDocSnap.data();
+
+						// Write to Svelte store for overall app use
 						currentUserData.set({ ...userData, uid: userUID });
 					} else {
 						// doc.data() will be undefined in this case
@@ -56,18 +54,18 @@
 	<div class="profile-pic">
 		<div
 			class="image"
-			style="background-image:url(https://images.unsplash.com/photo-1603775020644-eb8decd79994?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXQlMjBwaG90b2dyYXBoeXxlbnwwfHwwfHw%3D&w=1000&q=80)"
+			style="background-image:url(https://media.licdn.com/dms/image/C4E03AQHAl2fCMkjdDg/profile-displayphoto-shrink_800_800/0/1622877807288?e=2147483647&v=beta&t=LDXFI0565H0IZltUmKWo12OUTouBkCxoz3vwteQ8Zc4)"
 		/>
 	</div>
 
-	<h1>{userData.name}</h1>
+	<h1>{$currentUserData.name}</h1>
 	<br />
 	<h5>Education Institution</h5>
-	<p>{userData.education_institution}</p>
+	<p>{$currentUserData.education_institution}</p>
 	<h5>Course of Study</h5>
-	<p>{userData.course}</p>
+	<p>{$currentUserData.course}</p>
 	<h5>Bio</h5>
-	<p>{userData.bio}</p>
+	<p>{$currentUserData.bio}</p>
 
 	<FormGroup>
 		<Button
