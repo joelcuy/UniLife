@@ -1,5 +1,5 @@
 @import "../../node_modules/bootstrap/scss/functions";
-@import "../../node_modules/bootstrap/scss/variables";
+// @import "../../node_modules/bootstrap/scss/variables";
 
 $primary: #e61010;
 $secondary: #8f5325;
@@ -19,6 +19,7 @@ $theme-colors: (
     danger: $danger,
     light: $light,
     dark: $dark,
+    // nav-pills-link-active-bg: $primary,
     // add any additional color below
 );
 
