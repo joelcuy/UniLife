@@ -6,11 +6,12 @@
 		sendEmailVerification
 	} from 'firebase/auth';
 	import { goto } from '$app/navigation';
-	// import { auth, userDoc } from '../../../Firebase';
-	import { auth } from '../../../Firebase';
+	import { app, auth } from '../../../lib/Firebase';
 	import { Form, FormGroup, Input, Label, Button, Spinner, Alert } from 'sveltestrap';
-	import { ROUTES } from '../../routelist';
-	// import { setDoc } from 'Firebase/firestore/lite';
+	import { ROUTES } from '../../../lib/routelist';
+	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+
+	const db = getFirestore(app);
 
 	let errorMessage;
 	let isError = false;
@@ -25,28 +26,27 @@
 		console.log(isError);
 		if (!isError) {
 			createUserWithEmailAndPassword(auth, email, password)
-				.then((userCredential) => {
+				.then(async (userCredential) => {
 					console.log(userCredential);
-					sendEmailVerification(userCredential.user).then(() => {
+					try {
+						const userRef = doc(db, 'users', userCredential.user.uid);
+						await setDoc(userRef, {
+							role: 'student'
+						});
+						console.log('User data appended to Firestore');
+					} catch (error) {
+						console.error('Error appending user data to Firestore:', error);
+					}
+					await sendEmailVerification(userCredential.user).then(() => {
 						// TODO redirect to login page https://stackoverflow.com/questions/47329158/firebase-redirect-user-to-a-page-after-clicking-verification-link#:~:text=By%20going%20into%20%22Firebase%20%2D%3E,any%20URL%20you%20want%20here.
 					});
-					goto('/');
 					// Signed in
+					goto(ROUTES.root);
 				})
 				.catch((error) => {
 					errorMessage = 'Server failed. Try again later';
 					console.log(error);
 				});
-
-			// try {
-			// 	await updateProfile(user.user, { displayName: event.detail.username });
-			// 	await setDoc(userDoc(auth.currentUser.uid), {
-			// 		username: user.user.displayName,
-			// 		email: user.user.email
-			// 	});
-			// } catch (e) {
-			// 	console.log('error from creating user', e);
-			// }
 		} else {
 			throw new Error('Did not meet authentication criteria.');
 		}
@@ -85,17 +85,22 @@
 <Alert color="danger" bind:isOpen={isError}>
 	{errorMessage}
 </Alert>
+<div class="center">
+	<h3>Sign Up</h3>
+	<p>Already a member? <a href={ROUTES.login}>Log in</a></p>
+</div>
 <SignUp on:clickSignup={signUp} />
 
 <!-- TODO Make this maintainable between login and signup -->
-<div class="separator-column">
+<!-- <div class="separator-column">
 	<div class="vertical-line" />
 	<div class="or-text">OR</div>
 	<div class="vertical-line" />
-</div>
+</div> -->
 
 <!-- TODO Change this button to secondary -->
-<FormGroup>
+
+<!-- <FormGroup>
 	<Button
 		color="primary"
 		id="login-button"
@@ -106,21 +111,10 @@
 	>
 		Login
 	</Button>
-</FormGroup>
-
+</FormGroup> -->
 <style>
-	.vertical-line {
-		width: 80px;
-		background-color: black;
-		height: 1px;
-	}
-
-	.separator-column {
-		display: flex;
-		flex-direction: row;
-		column-gap: 16px;
-		align-items: center;
-		flex: 1;
-		justify-content: center;
+	.center {
+		display: block;
+		text-align: center;
 	}
 </style>

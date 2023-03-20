@@ -1,6 +1,7 @@
 <script>
 	import { Form, FormGroup, Input, Label, Button } from 'sveltestrap';
 	import { createEventDispatcher } from 'svelte';
+	import { ROUTES } from '../../routelist';
 
 	let dispatch = createEventDispatcher();
 	let email, password;
@@ -15,18 +16,20 @@
 
 <Form>
 	<!-- <Alert color="danger">test</Alert> -->
-	<FormGroup>
-		<Label for="email">Email</Label>
-		<Input type="email" name="email" id="email" bind:value={email} />
+	<FormGroup floating label="Email">
+		<!-- <Label for="email">Email</Label> -->
+		<Input type="email" placeholder="." bind:value={email} />
+	</FormGroup>
+	<FormGroup floating label="Password">
+		<!-- <Label for="password">Password</Label> -->
+		<Input type="password" placeholder="." name="password" id="password" bind:value={password} />
 	</FormGroup>
 	<FormGroup>
-		<Label for="password">Password</Label>
-		<Input type="password" name="password" id="password" bind:value={password} />
+		<a href={ROUTES.forgotPassword}>Forgotten password?</a>
 	</FormGroup>
 	<FormGroup>
 		<Button color="primary" block on:click={dispatchLoginData}>Login</Button>
 	</FormGroup>
-	<a href="/forgot_password">Forgotten password?</a>
 	<!-- {#if loading}
                 <div class="spinnerDiv">
                     <Spinner color="danger" />
@@ -35,3 +38,10 @@
 
 	<!-- {/if} -->
 </Form>
+
+<style>
+	a {
+		display: block;
+		text-align: center;
+	}
+</style>

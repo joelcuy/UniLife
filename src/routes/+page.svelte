@@ -1,7 +1,7 @@
 <script>
 	import { signOut, onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
-	import { auth } from '../Firebase';
+	import { auth } from '../lib/Firebase';
 	import {
 		createUserWithEmailAndPassword,
 		updateProfile,
@@ -19,12 +19,10 @@
 		CardBody
 	} from 'sveltestrap';
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
-	import { page } from '$app/stores';
-	import { app } from '../Firebase';
-	import { ROUTES } from './routelist';
+	import { ROUTES } from '../lib/routelist';
 	import { Col, Container, Row } from 'sveltestrap';
-	import { currentUserData } from '../stores';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+	import { currentUserData } from '../lib/stores';
 
 	// Initialize Cloud Firestore and get a reference to the service
 	// const db = getFirestore(app);
@@ -44,31 +42,17 @@
 	let userData;
 	onMount(() => {
 		onAuthStateChanged(auth, async (user) => {
-			console.log('user state change');
 			if (user) {
 				if (user.emailVerified) {
-					// try {
-					// 	const userRef = doc(db, 'users', user.uid);
-					// 	const userDocSnap = await getDoc(userRef);
-
-					// 	if (userDocSnap.exists()) {
-					// 		console.log('Document data:', userDocSnap.data());
-					// 		userData = userDocSnap.data();
-					// 	} else {
-					// 		// doc.data() will be undefined in this case
-					// 		console.log('No such document!');
-					// 	}
-					// 	console.log('Successful data read from Firestore');
-					// } catch (error) {
-					// 	console.error('Error reading user data from Firestore:', error);
-					// }
-					// currentUserData.set(userData);
-					goto('/user/feed');
+					switch ($currentUserData.role) {
+						case 'student':
+							goto(ROUTES.feed);
+							break;
+						case 'organization':
+							goto(ROUTES.orgDashboard);
+							break;
+					}
 				}
-			} else {
-				// If not logged in, redirect to login
-				console.log('no current user');
-				goto(ROUTES.login);
 			}
 		});
 	});
