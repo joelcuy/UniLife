@@ -7,10 +7,11 @@
 	import { goto } from '$app/navigation';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 	import { ROUTES } from '../../../lib/routelist';
-	import { currentUserData } from '../../../lib/stores';
 
 	// Initialize Cloud Firestore and get a reference to the service
 	const db = getFirestore(app);
+
+	let userData = {};
 
 	onMount(async () => {
 		// console.log($currentUserData);
@@ -24,10 +25,10 @@
 
 					if (userDocSnap.exists()) {
 						console.log('Document data:', userDocSnap.data());
-						let userData = userDocSnap.data();
+						userData = userDocSnap.data();
 
 						// Write to Svelte store for overall app use
-						currentUserData.set({ ...userData, uid: userUID });
+						// currentUserData.set({ ...userData, uid: userUID });
 					} else {
 						// doc.data() will be undefined in this case
 						console.log('No such document!');
@@ -58,14 +59,14 @@
 		/>
 	</div>
 
-	<h1>{$currentUserData.name}</h1>
+	<h1>{userData.name}</h1>
 	<br />
 	<h5>Education Institution</h5>
-	<p>{$currentUserData.education_institution}</p>
+	<p>{userData.educationInstitution}</p>
 	<h5>Course of Study</h5>
-	<p>{$currentUserData.course}</p>
+	<p>{userData.course}</p>
 	<h5>Bio</h5>
-	<p>{$currentUserData.bio}</p>
+	<p>{userData.bio}</p>
 
 	<FormGroup>
 		<Button
@@ -85,6 +86,7 @@
 	.page-container {
 		padding: 1rem;
 	}
+	/* TODO Move into layout */
 
 	h1 {
 		text-align: center;

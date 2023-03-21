@@ -17,7 +17,7 @@
 	import { ROUTES } from '../../../lib/routelist';
 	import { onMount } from 'svelte';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import { currentUserData } from '../../../lib/stores';
+	// import { currentUserData } from '../../../lib/stores';
 
 	// Initialize Cloud Firestore and get a reference to the service
 	const db = getFirestore(app);
@@ -106,7 +106,6 @@
 <LoginForm on:clickLogin={login} />
 
 <style>
-
 	.center {
 		display: block;
 		text-align: center;

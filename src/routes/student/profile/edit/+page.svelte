@@ -1,14 +1,13 @@
 <script>
 	import { FormGroup, Button, Form, Label, Input } from 'sveltestrap';
 	import { getStores } from '$app/stores';
-	import { app, auth } from '../../../../lib/Firebase';
+	import { app, auth } from '$lib/Firebase';
 	import { onMount } from 'svelte';
 	import { signOut, onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import { ROUTES } from '../../../../lib/routelist';
+	import { ROUTES } from '$lib/routelist';
 	import { page } from '$app/stores';
-	import { currentUserData } from '../../../../lib/stores';
 
 	// Initialize Cloud Firestore and get a reference to the service
 	const db = getFirestore(app);
@@ -19,12 +18,13 @@
 	let course;
 	let bio;
 
+	// TODO update this
 	onMount(() => {
-		userUID = $currentUserData.uid;
-		name = $currentUserData.name;
-		educationIns = $currentUserData.education_institution;
-		course = $currentUserData.course;
-		bio = $currentUserData.bio;
+		// userUID = $currentUserData.uid;
+		// name = $currentUserData.name;
+		// educationIns = $currentUserData.educationInstitution;
+		// course = $currentUserData.course;
+		// bio = $currentUserData.bio;
 	});
 
 	async function handleSaveProfile() {
@@ -34,7 +34,7 @@
 				userRef,
 				{
 					name: name,
-					education_institution: educationIns,
+					educationInstitution: educationIns,
 					course: course,
 					bio: bio
 				},

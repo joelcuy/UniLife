@@ -9,7 +9,8 @@
 		Button,
 		Spinner,
 		Alert,
-		NavLink
+		NavLink,
+		Nav
 	} from 'sveltestrap';
 	import { app, auth } from '../../lib/Firebase';
 	import { createEventDispatcher } from 'svelte';
@@ -23,18 +24,25 @@
 	let email;
 	let orgName;
 	let about;
-	let docRef;
-	let isLoading = false;
+	// let docRef;
+	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
+	let currentPageState = PAGE_STATES.form;
 
-	async function submitOrganizerRequest() {
+	async function submitOrganizationRequest() {
+		// Create a timestamp using the Date object
+		const timestamp = new Date().toISOString();
+		console.log(timestamp);
 		try {
-			docRef = await addDoc(collection(db, 'organizerRequests'), {
+			currentPageState = PAGE_STATES.loading;
+			let docRef = await addDoc(collection(db, 'organizationRequests'), {
 				email: email,
 				orgName: orgName,
 				about: about,
-				approved: false
+				requestStatus: "Pending",
+				requestDate: timestamp,
 			});
 			console.log('Org Request document written with ID: ', docRef.id);
+			currentPageState = PAGE_STATES.complete;
 			// TODO Show success
 		} catch (error) {
 			console.error('Error writing document to Firestore:', error);
@@ -42,23 +50,15 @@
 	}
 </script>
 
-<!-- TODO Send user to success page -->
 <!-- TODO Check if email is duplicated with student -->
 <!-- TODO Input validation-->
-<Button
-	outline
-	color="primary"
-	on:click={() => {
-		goto(ROUTES.signup);
-	}}
->
-	<Icon name="arrow-left" />
-	Back
-</Button>
+<Nav>
+	<NavLink href={ROUTES.login}><Icon name="arrow-left" /> Back</NavLink>
+</Nav>
 <div class="page-container">
 	<CustomCard>
 		<h3>Request Organization Account</h3>
-		{#if !docRef}
+		{#if currentPageState === PAGE_STATES.form}
 			<Form>
 				<FormGroup>
 					<Label for="orgName">Organization Name</Label>
@@ -76,7 +76,7 @@
 						type="email"
 						name="email"
 						id="email"
-						placeholder="This will be the email tied to this organization account"
+						placeholder="Email for account creation"
 						bind:value={email}
 					/>
 				</FormGroup>
@@ -92,12 +92,17 @@
 					/>
 				</FormGroup>
 				<FormGroup>
-					<Button color="primary" disabled={isLoading} block on:click={submitOrganizerRequest}
-						>Submit</Button
+					<Button
+						color="primary"
+						disabled={currentPageState === PAGE_STATES.loading}
+						block
+						on:click={submitOrganizationRequest}>Submit</Button
 					>
 				</FormGroup>
 			</Form>
-		{:else}
+		{:else if currentPageState === PAGE_STATES.loading}
+			loading...
+		{:else if currentPageState === PAGE_STATES.complete}
 			Request submitted successfully
 		{/if}
 	</CustomCard>

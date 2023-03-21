@@ -22,7 +22,6 @@
 	import { ROUTES } from '../lib/routelist';
 	import { Col, Container, Row } from 'sveltestrap';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import { currentUserData } from '../lib/stores';
 	import CustomCard from '../lib/components/CustomCard.svelte';
 	import { getUserRole } from '../lib/auth';
 
@@ -125,14 +124,14 @@
 		</div>
 		<div class="width-limiter">
 			<Row>
-				<Col xs="12" md="6">
+				<Col xs="12" sm="6">
 					<FormGroup>
 						<Button color="primary" id="logout-button" block on:click={signout}
 							>Back to Login</Button
 						>
 					</FormGroup>
 				</Col>
-				<Col xs="12" md="6">
+				<Col xs="12" sm="6">
 					<FormGroup>
 						<Button
 							color="primary"
@@ -162,9 +161,5 @@
 
 	.header {
 		text-align: center;
-	}
-
-	.width-limiter {
-		width: 75%;
 	}
 </style>

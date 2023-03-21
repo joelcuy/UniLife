@@ -22,3 +22,9 @@ export async function getUserRole(uid) {
 		console.error('Error reading data from Firestore:', error);
 	}
 }
+
+// auth check
+
+// Password generator
+
+// regex check

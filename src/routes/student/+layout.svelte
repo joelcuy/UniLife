@@ -20,7 +20,7 @@
 </script>
 
 <!-- Only allow access if role is organization -->
-{#if userRole === 'organization'}
+{#if userRole === 'student'}
 	<Navbar color={'primary'} dark>
 		<NavbarBrand class="mx-auto" href={ROUTES.root}>UniLife</NavbarBrand>
 	</Navbar>
