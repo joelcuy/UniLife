@@ -22,7 +22,8 @@
 <!-- Only allow access if role is organization -->
 {#if userRole === 'student'}
 	<Navbar color={'primary'} dark>
-		<NavbarBrand class="mx-auto" href={ROUTES.root}>UniLife</NavbarBrand>
+		<NavbarBrand class="mx-auto">UniLife</NavbarBrand>
+		<!-- <NavbarBrand class="mx-auto" href={ROUTES.root}>UniLife</NavbarBrand> -->
 	</Navbar>
 	<slot />
 	<nav class="nav">

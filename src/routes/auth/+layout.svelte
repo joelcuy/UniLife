@@ -1,11 +1,5 @@
 <script>
 	import CustomCard from '../../lib/components/CustomCard.svelte';
-
-	import { getStores } from '$app/stores';
-	import { auth } from '../../lib/Firebase';
-	import { onMount } from 'svelte';
-	import { signOut, onAuthStateChanged } from 'firebase/auth';
-	import { goto } from '$app/navigation';
 </script>
 
 <div class="page-container">
