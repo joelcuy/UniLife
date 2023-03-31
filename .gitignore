@@ -12,3 +12,5 @@ vite.config.ts.timestamp-*
 
 # Firebase Cloud Functions
 functions/node_modules/
+firebase-debug.log
+ui-debug.log
