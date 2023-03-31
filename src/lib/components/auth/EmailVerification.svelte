@@ -1,12 +1,8 @@
-<!-- <script>
+<script>
 	import { signOut, onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
-	import { auth } from '../lib/Firebase';
-	import {
-		createUserWithEmailAndPassword,
-		updateProfile,
-		sendEmailVerification
-	} from 'firebase/auth';
+	import { auth } from '$lib/Firebase';
+	import { sendEmailVerification } from 'firebase/auth';
 	import {
 		Form,
 		FormGroup,
@@ -19,11 +15,10 @@
 		CardBody
 	} from 'sveltestrap';
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
-	import { ROUTES } from '../lib/routelist';
+	import { ROUTES } from '$lib/routelist';
 	import { Col, Container, Row } from 'sveltestrap';
-	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import CustomCard from '../lib/components/CustomCard.svelte';
-	import { getUserRole } from '../lib/auth';
+	import CustomCard from '$lib/components/CustomCard.svelte';
+	import { getUserRole } from '$lib/auth';
 
 	// Initialize Cloud Firestore and get a reference to the service
 	// const db = getFirestore(app);
@@ -108,15 +103,18 @@
 			startCounter();
 		});
 	}
-</script> -->
+</script>
 
-<!-- <div class="page-container">
+<!-- This page is used for logged in users but unable to access content -->
+<!-- Reasons: Unverified Email -->
+<div class="page-container">
 	<CustomCard>
 		<div class="width-limiter">
 			<Alert isOpen={showAlert} color="success">A verification link has been emailed to you!</Alert>
 		</div>
 		<div class="header">
 			<h1>Verify E-mail Address</h1>
+			<br />
 			<p>Please check your email and click on the verification link to continue.</p>
 		</div>
 		<div class="width-limiter">
@@ -145,9 +143,9 @@
 			</Row>
 		</div>
 	</CustomCard>
-</div> -->
+</div>
 
-<!-- <style>
+<style>
 	.page-container {
 		display: flex;
 		flex-direction: column;
@@ -159,4 +157,4 @@
 	.header {
 		text-align: center;
 	}
-</style> -->
+</style>

@@ -55,7 +55,15 @@
 						console.log('Successful data read from Firestore');
 
 						if (userRole === selectedRole) {
-							goto(ROUTES.root);
+							switch (userRole) {
+								case 'student':
+									goto(ROUTES.feed);
+									break;
+
+								case 'organization':
+									goto(ROUTES.orgDashboard);
+									break;
+							}
 						} else {
 							errorMessage = `No ${selectedRole} account associated with this email. Please ensure you've selected the correct login type.`;
 							isError = true;
@@ -107,10 +115,16 @@
 </Alert>
 <div class="center">
 	<h3>Log in</h3>
-	<p>Not a member yet? <a href={ROUTES.signup}>Sign up</a></p>
 </div>
 <TabContent on:tab={handleTabChange} class="nav-fill" color="primary">
-	<TabPane tabId="student" tab="Student" active />
+	<TabPane tabId="student" tab="Student" active>
+		<div class="center">
+			<br />
+			<p>
+				Not a member yet? <a href={ROUTES.signup}>Sign up</a>
+			</p>
+		</div>
+	</TabPane>
 	<TabPane tabId="organization" tab="Organization">
 		<div class="center">
 			<br />
@@ -123,27 +137,6 @@
 </TabContent>
 <LoginForm on:clickLogin={login} />
 
-<!-- TODO Make this maintainable between login and signup -->
-<!-- <div class="separator-column">
-	<div class="vertical-line" />
-	<div class="or-text">OR</div>
-	<div class="vertical-line" />
-</div> -->
-
-<!-- TODO Change this button to secondary -->
-
-<!-- <FormGroup>
-	<Button
-		color="primary"
-		id="login-button"
-		block
-		on:click={() => {
-			goto(ROUTES.signup);
-		}}
-	>
-		Create New Account
-	</Button>
-</FormGroup> -->
 <style>
 	p {
 		margin-bottom: 0;
