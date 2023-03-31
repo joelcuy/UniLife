@@ -3,27 +3,27 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 exports.createUserAndSendVerificationEmail = functions.https.onCall(async (data, context) => {
+	// console.log(context.auth);
 	// Check if the request is made by an authenticated admin
-	if (context.auth && context.auth.token.admin === true) {
+	if (context.auth) {
+		const currentUserUID = context.auth.uid;
 		const { email, password } = data;
 
-		// Create the user account
-		const newUser = await admin.auth().createUser({
-			email,
-			password
-		});
+		// Get the user's isAdmin status from Firestore
+		const userDoc = await admin.firestore().collection('users').doc(currentUserUID).get();
 
-		// Send email verification
-		await admin
-			.auth()
-			.generateEmailVerificationLink(newUser.email)
-			.then((link) => {
-				// Construct email with the verification link and send it to the user
-				// You can use third-party services like SendGrid, Nodemailer, or Mailgun to send the email
+		if (userDoc.exists && userDoc.data().role === 'admin') {
+			// Create the user account
+			const newUser = await admin.auth().createUser({
+				email,
+				password
 			});
 
-		return { success: true, message: 'User created and verification email sent' };
+			return { success: true, message: 'User created' };
+		} else {
+			return { success: false, message: 'Request not authorized' };
+		}
 	} else {
-		return { success: false, message: 'Request not authorized' };
+		return { success: false, message: 'Request not authenticated' };
 	}
 });
