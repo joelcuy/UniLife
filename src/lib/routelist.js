@@ -3,6 +3,7 @@ export const ROUTES = Object.freeze({
 	// Authentication
 	login: '/auth/login',
 	signup: '/auth/signup',
+	adminLogin: '/auth/admin',
 	forgotPassword: '/forgot-password',
 
 	//Student
