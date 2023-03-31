@@ -12,6 +12,12 @@
 		NavLink,
 		Nav
 	} from 'sveltestrap';
+	import { authCheck, checkEmptyValues } from '../../lib/auth';
+	import {
+		createUserWithEmailAndPassword,
+		updateProfile,
+		sendEmailVerification
+	} from 'firebase/auth';
 	import { app, auth } from '../../lib/Firebase';
 	import { createEventDispatcher } from 'svelte';
 	import { getFirestore, doc, setDoc, getDoc, addDoc, collection } from 'firebase/firestore';
@@ -24,40 +30,87 @@
 	let email;
 	let orgName;
 	let about;
+	let password;
+	let passwordConfirmation;
 	// let docRef;
 	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
 	let currentPageState = PAGE_STATES.form;
+	let isError = false;
+	let errorMessage;
 
-	async function submitOrganizationRequest() {
+	async function createAccount() {
+		console.log(email);
+		console.log(orgName);
+		console.log(about);
+		console.log(password);
+		console.log(passwordConfirmation);
+
+		// Value check for account creation fields
+		const authResult = authCheck(email, password, passwordConfirmation);
+
+		// Value check for organization request fields
+		const validationResult = checkEmptyValues(['Organization name', orgName], ['About', about]);
+
+		if (authResult.isError) {
+			isError = true;
+			errorMessage = authResult.message;
+			throw new Error(authResult.message);
+		} else if (validationResult.isError) {
+			isError = true;
+			errorMessage = validationResult.message;
+			throw new Error(validationResult.message);
+		} else {
+			try {
+				const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+				const userRef = doc(db, 'users', userCredential.user.uid);
+				await setDoc(userRef, {
+					role: 'organization',
+					isActive: false
+				});
+				console.log('Organization data appended to Firestore');
+				await sendEmailVerification(userCredential.user);
+
+				submitOrganizationRequest(userCredential.user.uid);
+				// Signed in
+			} catch (error) {
+				console.error('Error during submitting request:', error);
+			}
+		}
+	}
+
+	async function submitOrganizationRequest(userUID) {
 		// Create a timestamp using the Date object
 		const timestamp = new Date().toISOString();
-		console.log(timestamp);
 		try {
 			currentPageState = PAGE_STATES.loading;
+
 			let docRef = await addDoc(collection(db, 'organizationRequests'), {
+				userUidFk: userUID,
 				email: email,
 				orgName: orgName,
 				about: about,
-				requestStatus: "Pending",
-				requestDate: timestamp,
+				requestStatus: 'Pending',
+				requestDate: timestamp
 			});
 			console.log('Org Request document written with ID: ', docRef.id);
 			currentPageState = PAGE_STATES.complete;
-			// TODO Show success
+			// Go to org dashboard
+			goto(ROUTES.orgDashboard);
 		} catch (error) {
 			console.error('Error writing document to Firestore:', error);
 		}
 	}
 </script>
 
-<!-- TODO Check if email is duplicated with student -->
-<!-- TODO Input validation-->
 <Nav>
 	<NavLink href={ROUTES.login}><Icon name="arrow-left" /> Back</NavLink>
 </Nav>
 <div class="page-container">
 	<CustomCard>
 		<h3>Request Organization Account</h3>
+		<Alert color="danger" bind:isOpen={isError}>
+			{errorMessage}
+		</Alert>
 		{#if currentPageState === PAGE_STATES.form}
 			<Form>
 				<FormGroup>
@@ -68,16 +121,6 @@
 						id="orgName"
 						placeholder="e.g. UoN Volleyball Club"
 						bind:value={orgName}
-					/>
-				</FormGroup>
-				<FormGroup>
-					<Label for="email">Email</Label>
-					<Input
-						type="email"
-						name="email"
-						id="email"
-						placeholder="Email for account creation"
-						bind:value={email}
 					/>
 				</FormGroup>
 				<FormGroup>
@@ -92,11 +135,41 @@
 					/>
 				</FormGroup>
 				<FormGroup>
+					<Label for="email">Email</Label>
+					<Input
+						type="email"
+						name="email"
+						id="email"
+						placeholder="Email for account creation"
+						bind:value={email}
+					/>
+				</FormGroup>
+				<FormGroup>
+					<Label for="password">Password</Label>
+					<Input
+						type="password"
+						name="password"
+						id="password"
+						placeholder="Password for account creation"
+						bind:value={password}
+					/>
+				</FormGroup>
+				<FormGroup>
+					<Label for="password2">Re-enter Password</Label>
+					<Input
+						type="password"
+						name="password"
+						id="password2"
+						placeholder="at least 8 characters"
+						bind:value={passwordConfirmation}
+					/>
+				</FormGroup>
+				<FormGroup>
 					<Button
 						color="primary"
 						disabled={currentPageState === PAGE_STATES.loading}
 						block
-						on:click={submitOrganizationRequest}>Submit</Button
+						on:click={createAccount}>Submit</Button
 					>
 				</FormGroup>
 			</Form>

@@ -1,5 +1,10 @@
 <script>
-	import { signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
+	import {
+		signOut,
+		onAuthStateChanged,
+		createUserWithEmailAndPassword,
+		sendEmailVerification
+	} from 'firebase/auth';
 	import { ListGroup, ListGroupItem, Nav, NavLink } from 'sveltestrap';
 	import {
 		Button,
@@ -25,7 +30,15 @@
 		setDoc,
 		onSnapshot
 	} from 'firebase/firestore';
-	import CustomCard from '../../lib/components/CustomCard.svelte';
+	import { httpsCallable } from 'firebase/functions';
+
+	// Testing in emulator
+	import { getApp } from 'firebase/app';
+	import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+	import { ROUTES } from '../../lib/routelist';
+
+	// const functions = getFunctions(getApp());
+	// connectFunctionsEmulator(functions, 'localhost', 5001);
 
 	// Initialize Cloud Firestore and get a reference to the service
 	const db = getFirestore(app);
@@ -51,30 +64,28 @@
 			.then(() => {
 				// Sign-out successful.
 				console.log('signed out');
+				goto(ROUTES.adminLogin);
 			})
 			.catch((error) => {
 				// An error happened.
 			});
 	}
 
-	async function approveRequest(requestUID, email) {
+	async function approveRequest({ email, about, orgName, uid, userUidFk }) {
 		try {
-			// Create user with email and password
-			const userCredential = await createUserWithEmailAndPassword(auth, email, 'asfdasfasdf');
-			
-			// Send email verification
-			await sendEmailVerification(userCredential.user);
-			
 			// Update organization request status
-			const orgRequestRef = doc(db, 'organizationRequests', requestUID);
+			const orgRequestRef = doc(db, 'organizationRequests', uid);
 			await setDoc(orgRequestRef, { requestStatus: 'Approved' }, { merge: true });
 
 			// Add user role to Firestore
-			const userRef = doc(db, 'users', userCredential.user.uid);
-			await setDoc(userRef, { role: 'organization' });
+			const userRef = doc(db, 'users', userUidFk);
+			await setDoc(
+				userRef,
+				{ about: about, email: email, orgName: orgName, isActive: true },
+				{ merge: true }
+			);
 
 			console.log('User data appended to Firestore');
-
 
 			// TODO: Redirect to login page after email verification
 		} catch (error) {
@@ -107,7 +118,7 @@
 						class="me-2"
 						color="primary"
 						on:click={() => {
-							approveRequest(orgRequest.uid, orgRequest.email);
+							approveRequest(orgRequest);
 						}}>Approve</Button
 					>
 					<Button color="primary" outline>Reject</Button>
