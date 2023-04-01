@@ -104,54 +104,35 @@
 
 <!-- This page is used for logged in users but unable to access content -->
 <!-- Reasons: Unverified Email -->
-<div class="page-container">
-	<CustomCard>
-		<div class="width-limiter">
+<div class="d-flex flex-column justify-content-center min-vh-100 py-4">
+	<Card class="col-10 col-sm-8 col-md-6 col-xxl-4 mx-auto">
+		<CardBody class="my-1 d-flex flex-column gap-3 ">
 			<Alert isOpen={showAlert} color="success">A verification link has been emailed to you!</Alert>
-		</div>
-		<div class="header">
-			<h1>Verify E-mail Address</h1>
-			<br />
-			<p>Please check your email and click on the verification link to continue.</p>
-		</div>
-		<div class="width-limiter">
+			<div class="text-center">
+				<h1>Verify E-mail Address</h1>
+				<br />
+				<p>Please check your email and click on the verification link to continue.</p>
+			</div>
 			<Row>
-				<Col xs="12" sm="6">
-					<FormGroup>
-						<Button color="primary" id="logout-button" block on:click={signout}
-							>Back to Login</Button
-						>
-					</FormGroup>
+				<Col sm="12" lg="6">
+					<Button color="primary" id="logout-button" block on:click={signout}>Back to Login</Button>
 				</Col>
-				<Col xs="12" sm="6">
-					<FormGroup>
-						<Button
-							color="primary"
-							disabled={isCooldown}
-							id="login-button"
-							block
-							on:click={resendVerificationEmail}
-						>
-							Resend Verification Email
-							{isCooldown ? displayCooldownCounter : ''}
-						</Button>
-					</FormGroup>
+				<Col sm="12" lg="6">
+					<Button
+						color="primary"
+						disabled={isCooldown}
+						id="login-button"
+						block
+						on:click={resendVerificationEmail}
+					>
+						Resend Verification Email
+						{isCooldown ? displayCooldownCounter : ''}
+					</Button>
 				</Col>
 			</Row>
-		</div>
-	</CustomCard>
+		</CardBody>
+	</Card>
 </div>
 
 <style>
-	.page-container {
-		display: flex;
-		flex-direction: column;
-		height: 100vh;
-		justify-content: center;
-		/* background-color: rgba(227, 231, 235); */
-	}
-
-	.header {
-		text-align: center;
-	}
 </style>

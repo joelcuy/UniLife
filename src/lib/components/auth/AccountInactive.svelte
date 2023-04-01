@@ -16,51 +16,24 @@
 	} from 'sveltestrap';
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { ROUTES } from '$lib/routelist';
-	import { Col, Container, Row } from 'sveltestrap';
-	import CustomCard from '$lib/components/CustomCard.svelte';
-	import { getUserRole } from '$lib/auth';
-
-	async function signout() {
-		signOut(auth)
-			.then(() => {
-				// Sign-out successful.
-				goto(ROUTES.login);
-				console.log('signed out');
-			})
-			.catch((error) => {
-				// An error happened.
-			});
-	}
+	import {signout} from "$lib/auth.js"
 </script>
 
-<div class="page-container">
-	<CustomCard>
-		<div class="header">
-			<h1>Account is Pending Approval</h1>
-			<br />
-			<p>
-				Your account is currently pending approval from our admin team. We appreciate your patience
-				and ask that you check back later to see if your account has been approved.
-			</p>
-		</div>
-		<div class="width-limiter">
-			<FormGroup>
-				<Button color="primary" id="logout-button" block on:click={signout}>Back to Login</Button>
-			</FormGroup>
-		</div>
-	</CustomCard>
+<div class="d-flex flex-column justify-content-center min-vh-100 py-4">
+	<Card class="col-10 col-sm-8 col-md-6 col-xxl-4 mx-auto">
+		<CardBody class="my-1 d-flex flex-column gap-3 ">
+			<div class="text-center">
+				<h1>Account is Pending Approval</h1>
+				<br />
+				<p>
+					Your account is currently pending approval from our admin team. We appreciate your
+					patience and ask that you check back later to see if your account has been approved.
+				</p>
+			</div>
+			<Button color="primary" id="logout-button" block on:click={signout}>Back to Login</Button>
+		</CardBody>
+	</Card>
 </div>
 
 <style>
-	.page-container {
-		display: flex;
-		flex-direction: column;
-		height: 100vh;
-		justify-content: center;
-		/* background-color: rgba(227, 231, 235); */
-	}
-
-	.header {
-		text-align: center;
-	}
 </style>
