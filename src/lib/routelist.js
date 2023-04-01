@@ -3,6 +3,8 @@ export const ROUTES = Object.freeze({
 	// Authentication
 	login: '/auth/login',
 	signup: '/auth/signup',
+	signupStudent: '/auth/signup/student',
+	signupOrg: '/auth/signup/organization',
 	adminLogin: '/auth/admin',
 	forgotPassword: '/forgot-password',
 
@@ -13,7 +15,7 @@ export const ROUTES = Object.freeze({
 	editProfile: '/student/profile/edit',
 
 	//Organization
-	requestOrgAccess: '/request-organization-access',
+	// requestOrgAccess: '/request-organization-access',
 	orgDashboard: '/organization',
 
 	//Admin

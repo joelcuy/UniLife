@@ -1,48 +1,16 @@
 <script>
-	import SignUp from '$lib/components/auth/SignupForm.svelte';
-	import {
-		createUserWithEmailAndPassword,
-		updateProfile,
-		sendEmailVerification
-	} from 'firebase/auth';
-	import { goto } from '$app/navigation';
-	import { app, auth } from '$lib/Firebase';
-	import { Form, FormGroup, Input, Label, Button, Spinner, Alert } from 'sveltestrap';
 	import { ROUTES } from '$lib/routelist';
-	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import { authCheck } from '$lib/auth';
+	import AccountTypeRadio from '../../../lib/components/auth/AccountTypeRadio.svelte';
+	import { Form, FormGroup, Input, Label, Button, Icon } from 'sveltestrap';
+	import { goto } from '$app/navigation';
 
-	const db = getFirestore(app);
+	let selectedRole = 'student';
 
-	let errorMessage;
-	let isError = false;
-	// let validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-	async function signUp(event) {
-		const email = event.detail.email;
-		const password = event.detail.password;
-		const passwordConfirmation = event.detail.passwordConfirmation;
-
-		const authResult = authCheck(email, password, passwordConfirmation);
-		if (authResult.isError) {
-			isError = true;
-			errorMessage = authResult.message;
-			throw new Error(authResult.message);
-		} else {
-			try {
-				const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-				const userRef = doc(db, 'users', userCredential.user.uid);
-				await setDoc(userRef, {
-					role: 'student',
-					email: 'email'
-				});
-				console.log('Student data appended to Firestore');
-				await sendEmailVerification(userCredential.user);
-				// Student signed in
-				goto(ROUTES.feed);
-			} catch (error) {
-				console.error('Error during signup:', error);
-			}
+	function nextPage() {
+		if (selectedRole === 'student') {
+			goto(ROUTES.signupStudent);
+		} else if (selectedRole === 'organization') {
+			goto(ROUTES.signupOrg);
 		}
 	}
 </script>
@@ -51,14 +19,29 @@
 	<title>Sign Up</title>
 </svelte:head>
 
-<Alert color="danger" bind:isOpen={isError}>
-	{errorMessage}
-</Alert>
 <div class="center">
 	<h3>Sign Up</h3>
 	<p>Already a member? <a href={ROUTES.login}>Log in</a></p>
 </div>
-<SignUp on:clickSignup={signUp} />
+<AccountTypeRadio
+	{selectedRole}
+	on:selectRole={(event) => (selectedRole = event.detail.selectedRole)}
+/>
+<div class="center">
+	<h6>Choose Account Type</h6>
+	{#if selectedRole === 'student'}
+		<p>
+			Discover and join extracurricular activities and stay updated on events related to your
+			interests.
+		</p>
+	{:else if selectedRole === 'organization'}
+		<p>
+			Promote and manage extracurricular activities for students. Connect with your target audience
+			and foster a sense of community while tracking attendance and engagement.
+		</p>
+	{/if}
+</div>
+<Button color="primary" block on:click={nextPage}>Next</Button>
 
 <style>
 	.center {

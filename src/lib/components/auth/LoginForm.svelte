@@ -1,10 +1,13 @@
 <script>
-	import { Form, FormGroup, Input, Label, Button } from 'sveltestrap';
+	import { Form, FormGroup, Input, Label, Button, Icon } from 'sveltestrap';
 	import { createEventDispatcher } from 'svelte';
 	import { ROUTES } from '../../routelist';
+	import { InputGroup, InputGroupText } from 'sveltestrap';
 
 	let dispatch = createEventDispatcher();
 	let email, password;
+
+	let passwordState = 'password';
 
 	function dispatchLoginData() {
 		dispatch('clickLogin', {
@@ -12,24 +15,45 @@
 			password
 		});
 	}
+
+	$: iconType = passwordState === 'text' ? 'eye-slash' : 'eye';
 </script>
 
 <Form>
-	<!-- <Alert color="danger">test</Alert> -->
-	<FormGroup floating label="Email">
-		<!-- <Label for="email">Email</Label> -->
-		<Input type="email" placeholder="." bind:value={email} />
-	</FormGroup>
-	<FormGroup floating label="Password">
-		<!-- <Label for="password">Password</Label> -->
-		<Input type="password" placeholder="." name="password" id="password" bind:value={password} />
+	<FormGroup>
+		<Input type="email" placeholder="Email" bind:value={email} />
 	</FormGroup>
 	<FormGroup>
-		<a href={ROUTES.forgotPassword}>Forgotten password?</a>
+		<InputGroup>
+			<Input
+				type={passwordState}
+				placeholder="Password"
+				name="password"
+				id="password"
+				bind:value={password}
+			/>
+			<InputGroupText>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<span
+					on:click={() => {
+						if (passwordState === 'password') {
+							passwordState = 'text';
+						} else {
+							passwordState = 'password';
+						}
+					}}
+				>
+					<Icon name={iconType} />
+				</span>
+			</InputGroupText>
+		</InputGroup>
 	</FormGroup>
 	<FormGroup>
-		<Button color="primary" block on:click={dispatchLoginData}>Login</Button>
+		<div>
+			<a href={ROUTES.forgotPassword}>Forgot password?</a>
+		</div>
 	</FormGroup>
+	<Button color="primary" block on:click={dispatchLoginData}>Login</Button>
 	<!-- {#if loading}
                 <div class="spinnerDiv">
                     <Spinner color="danger" />
@@ -40,8 +64,7 @@
 </Form>
 
 <style>
-	a {
-		display: block;
-		text-align: center;
+	div {
+		text-align: right;
 	}
 </style>
