@@ -5,18 +5,19 @@
 	import { Form, FormGroup, Input, Label, Button, Spinner, Alert } from 'sveltestrap';
 	import { onMount } from 'svelte';
 	import { ROUTES } from '$lib/routelist';
+	import { signout } from '$lib/auth.js';
 
-	async function signout() {
-		signOut(auth)
-			.then(() => {
-				// Sign-out successful.
-				goto(ROUTES.login);
-				console.log('signed out');
-			})
-			.catch((error) => {
-				// An error happened.
-			});
-	}
+	// async function signout() {
+	// 	signOut(auth)
+	// 		.then(() => {
+	// 			// Sign-out successful.
+	// 			goto(ROUTES.login);
+	// 			console.log('signed out');
+	// 		})
+	// 		.catch((error) => {
+	// 			// An error happened.
+	// 		});
+	// }
 </script>
 
 <h1>Student Home</h1>

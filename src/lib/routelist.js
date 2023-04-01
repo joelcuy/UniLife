@@ -15,7 +15,6 @@ export const ROUTES = Object.freeze({
 	editProfile: '/student/profile/edit',
 
 	//Organization
-	// requestOrgAccess: '/request-organization-access',
 	orgDashboard: '/organization',
 
 	//Admin
