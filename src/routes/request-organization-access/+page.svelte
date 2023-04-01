@@ -1,5 +1,5 @@
-<script>
-	import CustomCard from '../../lib/components/CustomCard.svelte';
+<!-- <script>
+	import CustomCard from '$lib/components/CustomCard.svelte';
 	import {
 		Icon,
 		Form,
@@ -12,20 +12,17 @@
 		NavLink,
 		Nav
 	} from 'sveltestrap';
-	import { authCheck, checkEmptyValues } from '../../lib/auth';
+	import { authCheck, checkEmptyValues } from '$lib/auth';
 	import {
 		createUserWithEmailAndPassword,
 		updateProfile,
 		sendEmailVerification
 	} from 'firebase/auth';
-	import { app, auth } from '../../lib/Firebase';
+	import { app, auth, db } from '$lib/Firebase';
 	import { createEventDispatcher } from 'svelte';
 	import { getFirestore, doc, setDoc, getDoc, addDoc, collection } from 'firebase/firestore';
-	import { ROUTES } from '../../lib/routelist';
+	import { ROUTES } from '$lib/routelist';
 	import { goto } from '$app/navigation';
-
-	// Initialize Cloud Firestore and get a reference to the service
-	const db = getFirestore(app);
 
 	let email;
 	let orgName;
@@ -100,9 +97,9 @@
 			console.error('Error writing document to Firestore:', error);
 		}
 	}
-</script>
+</script> -->
 
-<Nav>
+<!-- <Nav>
 	<NavLink href={ROUTES.login}><Icon name="arrow-left" /> Back</NavLink>
 </Nav>
 <div class="page-container">
@@ -179,13 +176,13 @@
 			Request submitted successfully
 		{/if}
 	</CustomCard>
-</div>
+</div> -->
 
-<style>
+<!-- <style>
 	.page-container {
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
 		justify-content: center;
 	}
-</style>
+</style> -->
