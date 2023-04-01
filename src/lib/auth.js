@@ -1,8 +1,9 @@
 import { auth, app } from './Firebase';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-
-// Initialize Cloud Firestore and get a reference to the service
-const db = getFirestore(app);
+import { signOut } from 'firebase/auth';
+import { ROUTES } from '$lib/routelist';
+import { goto } from '$app/navigation';
+import { db } from './Firebase';
 
 export async function getUserRole(uid) {
 	if (!uid) {
@@ -24,7 +25,7 @@ export async function getUserRole(uid) {
 
 let validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-export function authCheck(email, password, passwordConfirmation) {
+export function authCheck(email, password, passwordConfirmation = undefined) {
 	if (email.length == 0 && password.length == 0) {
 		return { isError: true, message: 'Please enter email address and password' };
 	} else if (email.length == 0) {
@@ -33,9 +34,9 @@ export function authCheck(email, password, passwordConfirmation) {
 		return { isError: true, message: 'Please enter a valid email address' };
 	} else if (password == '') {
 		return { isError: true, message: 'Please enter password' };
-	} else if (password.length < 8) {
+	} else if (passwordConfirmation !== undefined && password.length < 8) {
 		return { isError: true, message: 'Password must be more than 8 characters' };
-	} else if (password !== passwordConfirmation) {
+	} else if (passwordConfirmation !== undefined && password !== passwordConfirmation) {
 		return { isError: true, message: 'Passwords do not match' };
 	}
 
@@ -51,8 +52,14 @@ export function checkEmptyValues(...args) {
 	return { isError: false };
 }
 
-// auth check
-
-// Password generator
-
-// regex check
+export async function signout() {
+	signOut(auth)
+		.then(() => {
+			// Sign-out successful.
+			console.log('signed out');
+			goto(ROUTES.login);
+		})
+		.catch((error) => {
+			// An error happened.
+		});
+}
