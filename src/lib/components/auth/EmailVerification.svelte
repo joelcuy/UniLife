@@ -20,9 +20,6 @@
 	import CustomCard from '$lib/components/CustomCard.svelte';
 	import { getUserRole } from '$lib/auth';
 
-	// Initialize Cloud Firestore and get a reference to the service
-	// const db = getFirestore(app);
-
 	let showAlert = false;
 
 	//Cooldown for requesting TAC

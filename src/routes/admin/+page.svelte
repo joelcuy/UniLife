@@ -17,7 +17,7 @@
 		CardTitle
 	} from 'sveltestrap';
 	import { goto } from '$app/navigation';
-	import { auth, app } from '../../lib/Firebase';
+	import { auth, app, db } from '../../lib/Firebase';
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { Form, FormGroup, Input, Label, Spinner, Alert } from 'sveltestrap';
 	import {
@@ -30,18 +30,7 @@
 		setDoc,
 		onSnapshot
 	} from 'firebase/firestore';
-	import { httpsCallable } from 'firebase/functions';
-
-	// Testing in emulator
-	import { getApp } from 'firebase/app';
-	import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 	import { ROUTES } from '../../lib/routelist';
-
-	// const functions = getFunctions(getApp());
-	// connectFunctionsEmulator(functions, 'localhost', 5001);
-
-	// Initialize Cloud Firestore and get a reference to the service
-	const db = getFirestore(app);
 
 	let isLoading = true;
 	let orgRequests = [];

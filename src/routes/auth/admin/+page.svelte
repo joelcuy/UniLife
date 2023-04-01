@@ -13,14 +13,11 @@
 	} from 'sveltestrap';
 	import { goto } from '$app/navigation';
 	import { signInWithEmailAndPassword } from 'firebase/auth';
-	import { auth, app } from '../../../lib/Firebase';
+	import { auth, app, db } from '../../../lib/Firebase';
 	import { ROUTES } from '../../../lib/routelist';
 	import { onMount } from 'svelte';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	// import { currentUserData } from '../../../lib/stores';
-
-	// Initialize Cloud Firestore and get a reference to the service
-	const db = getFirestore(app);
+	
 	let userData = {};
 	let selectedRole;
 

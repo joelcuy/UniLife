@@ -1,15 +1,11 @@
 <script>
 	import { FormGroup, Button } from 'sveltestrap';
-	import { getStores } from '$app/stores';
-	import { auth, app } from '../../../lib/Firebase';
+	import { auth, app, db } from '../../../lib/Firebase';
 	import { onMount } from 'svelte';
-	import { signOut, onAuthStateChanged } from 'firebase/auth';
+	import { onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import { ROUTES } from '../../../lib/routelist';
-
-	// Initialize Cloud Firestore and get a reference to the service
-	const db = getFirestore(app);
+	import { ROUTES } from '$lib/routelist';
 
 	let userData = {};
 
