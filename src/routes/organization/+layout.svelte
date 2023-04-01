@@ -1,14 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
 	import { onAuthStateChanged } from 'firebase/auth';
-	import { getUserRole } from '$lib/auth';
-	import { auth, app } from '../../lib/Firebase';
+	import { auth, app, db } from '$lib/Firebase';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	import EmailVerification from '../../lib/components/auth/EmailVerification.svelte';
-	import AccountInactive from '../../lib/components/auth/AccountInactive.svelte';
-
-	// Initialize Cloud Firestore and get a reference to the service
-	const db = getFirestore(app);
+	import EmailVerification from '$lib/components/auth/EmailVerification.svelte';
+	import AccountInactive from '$lib/components/auth/AccountInactive.svelte';
 
 	const PAGE_STATES = Object.freeze({
 		loading: 1,
@@ -45,10 +41,11 @@
 				} else {
 					currentPageState = PAGE_STATES.accessible;
 				}
+			} else {
+				currentPageState = PAGE_STATES.unauthorized;
 			}
 		});
 	});
-	
 </script>
 
 <!-- Only allow access if role is organization -->
