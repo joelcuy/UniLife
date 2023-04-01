@@ -17,76 +17,61 @@
 	import { ROUTES } from '../../../lib/routelist';
 	import { onMount } from 'svelte';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-	
-	let userData = {};
-	let selectedRole;
+	import { authCheck, signout } from '$lib/auth';
 
+	let userData = {};
 	let errorMessage;
 	let isError = false;
-	let validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+	let userUID;
 
 	async function login(event) {
-		let email = event.detail.email;
-		let password = event.detail.password;
+		const email = event.detail.email;
+		const password = event.detail.password;
 
-		isError = authCheck(email, password);
-		if (!isError) {
-			signInWithEmailAndPassword(auth, email, password)
-				.then(async (userCredential) => {
-					const userUID = userCredential.user.uid;
-					try {
-						const userRef = doc(db, 'users', userUID);
-						const userDocSnap = await getDoc(userRef);
+		const authResult = authCheck(email, password);
 
-						let userRole;
-						if (userDocSnap.exists()) {
-							console.log('Document data:', userDocSnap.data());
-							userData = userDocSnap.data();
-							userRole = userData.role;
-							console.log(userRole);
-						} else {
-							// doc.data() will be undefined in this case
-							console.log('No such document!');
-						}
-						console.log('Successful data read from Firestore');
+		if (authResult.isError) {
+			isError = true;
+			errorMessage = authResult.message;
+			throw new Error(authResult.message);
+		} else {
+			try {
+				const userCredential = signInWithEmailAndPassword(auth, email, password);
+				userUID = userCredential.user.uid;
+			} catch (error) {
+				console.error('Error during login:', error);
+				isError = true;
+				errorMessage = 'Incorrect email or password.';
+			}
 
-						if (userRole === "admin") {
-							goto(ROUTES.adminDashboard);
-						} else {
-							errorMessage = `No ${selectedRole} account associated with this email. Please ensure you've selected the correct login type.`;
-							isError = true;
-						}
-					} catch (error) {
-						console.error('Error reading user data from Firestore:', error);
-					}
+			try {
+				const userRef = doc(db, 'users', userUID);
+				const userDocSnap = await getDoc(userRef);
 
-					// Signed in
-					// ...
-				})
-				.catch((error) => {
-					console.log(error.message);
-					errorMessage = 'Email or password incorrect!';
+				let userRole;
+				if (userDocSnap.exists()) {
+					// console.log('Document data:', userDocSnap.data());
+					userData = userDocSnap.data();
+					userRole = userData.role;
+					// console.log(userRole);
+					console.log('Successful data read from Firestore');
+				} else {
+					console.log('No such document!');
+				}
+
+				if (userRole === 'admin') {
+					goto(ROUTES.adminDashboard);
+				} else {
+					signout();
+					errorMessage = `No admin account associated with this email. Please ensure you've selected the correct login type.`;
 					isError = true;
-				});
+				}
+			} catch (error) {
+				console.error('Error during user data retrieval:', error);
+				isError = true;
+				errorMessage = 'Error retrieving user data.';
+			}
 		}
-	}
-
-	function authCheck(email, password) {
-		if (email.length == 0 && password.length == 0) {
-			errorMessage = 'Please enter email address and password';
-			return true;
-		} else if (email.length == 0) {
-			errorMessage = 'Please enter email address';
-			return true;
-		} else if (!email.match(validRegex)) {
-			errorMessage = 'Please enter a proper email address';
-			return true;
-		} else if (password == '') {
-			errorMessage = 'Please enter your password';
-			return true;
-		}
-
-		return false;
 	}
 </script>
 
