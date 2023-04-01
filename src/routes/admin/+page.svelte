@@ -1,9 +1,6 @@
 <script>
 	import {
-		signOut,
-		onAuthStateChanged,
-		createUserWithEmailAndPassword,
-		sendEmailVerification
+		signOut
 	} from 'firebase/auth';
 	import { ListGroup, ListGroupItem, Nav, NavLink } from 'sveltestrap';
 	import {
