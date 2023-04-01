@@ -53,11 +53,11 @@ export function checkEmptyValues(...args) {
 }
 
 export async function signout() {
+	goto(ROUTES.login);
 	signOut(auth)
 		.then(() => {
 			// Sign-out successful.
 			console.log('signed out');
-			goto(ROUTES.login);
 		})
 		.catch((error) => {
 			// An error happened.
