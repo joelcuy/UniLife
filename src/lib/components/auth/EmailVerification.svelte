@@ -33,23 +33,23 @@
 	$: displayCooldownCounter = `(${cooldownCounter.toString()}s)`;
 
 	// let userData;
-	onMount(() => {
-		onAuthStateChanged(auth, async (user) => {
-			if (user) {
-				if (user.emailVerified) {
-					let userRole = await getUserRole(user.uid);
-					switch (userRole) {
-						case 'student':
-							goto(ROUTES.feed);
-							break;
-						case 'organization':
-							goto(ROUTES.orgDashboard);
-							break;
-					}
-				}
-			}
-		});
-	});
+	// onMount(() => {
+		// onAuthStateChanged(auth, async (user) => {
+		// 	if (user) {
+		// 		if (user.emailVerified) {
+		// 			let userRole = await getUserRole(user.uid);
+		// 			switch (userRole) {
+		// 				case 'student':
+		// 					goto(ROUTES.feed);
+		// 					break;
+		// 				case 'organization':
+		// 					goto(ROUTES.orgDashboard);
+		// 					break;
+		// 			}
+		// 		}
+		// 	}
+		// });
+	// });
 
 	afterUpdate(() => {
 		// When counter reaches 0, clear interval

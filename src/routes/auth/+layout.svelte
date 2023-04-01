@@ -1,14 +1,32 @@
 <script>
-	import {
-		Button,
-		Card,
-		CardBody,
-		CardFooter,
-		CardHeader,
-		CardSubtitle,
-		CardText,
-		CardTitle
-	} from 'sveltestrap';
+	import { Card, CardBody } from 'sveltestrap';
+	import { onAuthStateChanged } from 'firebase/auth';
+	import { auth } from '$lib/Firebase';
+	import { onMount } from 'svelte';
+	import { getUserRole } from '$lib/auth';
+
+	onMount(() => {
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				let userRole = await getUserRole(user.uid);
+				switch (userRole) {
+					case 'student':
+						goto(ROUTES.feed);
+						break;
+					case 'organization':
+						goto(ROUTES.orgDashboard);
+						break;
+					case 'admin':
+						goto(ROUTES.adminDashboard);
+						break;
+				}
+			} else {
+				// If not logged in, redirect to login
+				console.log('no current user');
+				goto(ROUTES.login);
+			}
+		});
+	});
 </script>
 
 <div class="d-flex flex-column justify-content-center min-vh-100 py-4">
