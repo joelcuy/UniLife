@@ -36,12 +36,15 @@
 			throw new Error(authResult.message);
 		} else {
 			try {
-				const userCredential = signInWithEmailAndPassword(auth, email, password);
+				const userCredential = await signInWithEmailAndPassword(auth, email, password);
+				console.log(userCredential);
 				userUID = userCredential.user.uid;
 			} catch (error) {
 				console.error('Error during login:', error);
 				isError = true;
 				errorMessage = 'Incorrect email or password.';
+				// If error in login no need to continue second block of code below
+				return;
 			}
 
 			try {
