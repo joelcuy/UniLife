@@ -1,12 +1,15 @@
 export const ROUTES = Object.freeze({
 	root: '/',
 	// Authentication
+	adminLogin: '/auth/admin',
+	forgotPassword: '/auth/forgot-password',
 	login: '/auth/login',
 	signup: '/auth/signup',
-	signupStudent: '/auth/signup/student',
 	signupOrg: '/auth/signup/organization',
-	adminLogin: '/auth/admin',
-	forgotPassword: '/forgot-password',
+	signupStudent: '/auth/signup/student',
+
+	//Organization
+	orgDashboard: '/organization',
 
 	//Student
 	feed: '/student/feed',
@@ -14,9 +17,16 @@ export const ROUTES = Object.freeze({
 	profile: '/student/profile',
 	editProfile: '/student/profile/edit',
 
-	//Organization
-	orgDashboard: '/organization',
-
 	//Admin
 	adminDashboard: '/admin'
 });
+
+export const publicRoutes = [
+	ROUTES.root,
+	ROUTES.adminLogin,
+	ROUTES.forgotPassword,
+	ROUTES.login,
+	ROUTES.signup,
+	ROUTES.signupOrg,
+	ROUTES.signupStudent,
+];
