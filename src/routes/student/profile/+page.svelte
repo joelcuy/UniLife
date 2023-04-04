@@ -47,42 +47,36 @@
 	/>
 </div> -->
 <!-- <img alt="asdf" src="https://picsum.photos/id/426/400/600.jpg" /> -->
-<div class="page-container">
-	<div class="profile-pic">
-		<div
-			class="image"
-			style="background-image:url(https://media.licdn.com/dms/image/C4E03AQHAl2fCMkjdDg/profile-displayphoto-shrink_800_800/0/1622877807288?e=2147483647&v=beta&t=LDXFI0565H0IZltUmKWo12OUTouBkCxoz3vwteQ8Zc4)"
-		/>
-	</div>
-
-	<h1>{userData.name}</h1>
-	<br />
-	<h5>Education Institution</h5>
-	<p>{userData.educationInstitution}</p>
-	<h5>Course of Study</h5>
-	<p>{userData.course}</p>
-	<h5>Bio</h5>
-	<p>{userData.bio}</p>
-
-	<FormGroup>
-		<Button
-			color="primary"
-			id="login-button"
-			block
-			on:click={() => {
-				goto(ROUTES.editProfile);
-			}}
-		>
-			Edit Profile
-		</Button>
-	</FormGroup>
+<div class="profile-pic">
+	<div
+		class="image"
+		style="background-image:url(https://media.licdn.com/dms/image/C4E03AQHAl2fCMkjdDg/profile-displayphoto-shrink_800_800/0/1622877807288?e=2147483647&v=beta&t=LDXFI0565H0IZltUmKWo12OUTouBkCxoz3vwteQ8Zc4)"
+	/>
 </div>
 
+<h1>{userData.name}</h1>
+<br />
+<h5>Education Institution</h5>
+<p>{userData.educationInstitution}</p>
+<h5>Course of Study</h5>
+<p>{userData.course}</p>
+<h5>Bio</h5>
+<p>{userData.bio}</p>
+
+<FormGroup>
+	<Button
+		color="primary"
+		id="login-button"
+		block
+		on:click={() => {
+			goto(ROUTES.editProfile);
+		}}
+	>
+		Edit Profile
+	</Button>
+</FormGroup>
+
 <style>
-	.page-container {
-		padding: 1rem;
-	}
-	/* TODO Move into layout */
 
 	h1 {
 		text-align: center;
@@ -124,15 +118,4 @@
 		right: 0;
 		bottom: 0;
 	}
-
-	/* .mask {
-		-webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 50%, transparent 100%);
-		mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 50%, transmask 100%);
-	}
-
-	img {
-		width: 100vw;
-		max-height: 300px;
-		background-position: center;
-	} */
 </style>
