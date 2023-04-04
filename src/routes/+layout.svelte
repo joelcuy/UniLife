@@ -40,7 +40,7 @@
 	});
 </script>
 
-<div class="bg-color">
+<div class="bg-color min-vh-100">
 	<slot />
 </div>
 
