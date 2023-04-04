@@ -35,6 +35,8 @@
 				console.error('Error during login:', error);
 				isError = true;
 				errorMessage = 'Incorrect email or password.';
+				// If error in login no need to continue second block of code below
+				return;
 			}
 
 			try {
