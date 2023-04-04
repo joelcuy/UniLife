@@ -5,6 +5,10 @@
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 	import EmailVerification from '$lib/components/auth/EmailVerification.svelte';
 	import AccountInactive from '$lib/components/auth/AccountInactive.svelte';
+	import { Navbar, NavbarBrand } from 'sveltestrap';
+	import BottomNav from '$lib/components/BottomNav.svelte';
+	import { page } from '$app/stores';
+	import { ROUTES } from '$lib/routelist';
 
 	const PAGE_STATES = Object.freeze({
 		loading: 1,
@@ -17,6 +21,12 @@
 
 	let userRole;
 	let isUserActive;
+
+	const navigationOptions = [
+		{ path: ROUTES.orgDashboard, icon: 'clipboard2-data', label: 'Dashboard' },
+		{ path: ROUTES.orgCreateEvent, icon: 'plus-square', label: 'Create Event' },
+		{ path: ROUTES.orgProfile, icon: 'person-fill', label: 'Profile' }
+	];
 
 	onMount(() => {
 		onAuthStateChanged(auth, async (user) => {
@@ -59,5 +69,18 @@
 {:else if currentPageState === PAGE_STATES.pendingActivation}
 	<AccountInactive />
 {:else if currentPageState === PAGE_STATES.accessible}
-	<slot />
+	<Navbar color="primary" dark class="fixed-top">
+		<NavbarBrand class="mx-auto">UniLife</NavbarBrand>
+		<!-- <NavbarBrand class="mx-auto" href={ROUTES.root}>UniLife</NavbarBrand> -->
+	</Navbar>
+	<div class="nav-compensation">
+		<slot />
+	</div>
+	<BottomNav options={navigationOptions} activePath={$page.url.pathname} />
 {/if}
+
+<style>
+	.nav-compensation {
+		padding: 4rem 1rem;
+	}
+</style>

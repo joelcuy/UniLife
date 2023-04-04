@@ -9,7 +9,9 @@ export const ROUTES = Object.freeze({
 	signupStudent: '/auth/signup/student',
 
 	//Organization
-	orgDashboard: '/organization',
+	orgDashboard: '/organization/dashboard',
+	orgCreateEvent: '/organization/create-event',
+	orgProfile: '/organization/profile',
 
 	//Student
 	feed: '/student/feed',
