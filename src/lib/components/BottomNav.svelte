@@ -1,12 +1,5 @@
 <script>
 	import { Icon } from 'sveltestrap';
-	import { page } from '$app/stores';
-	import { ROUTES } from '../../lib/routelist';
-	import { Navbar, NavbarBrand } from 'sveltestrap';
-	import { onMount } from 'svelte';
-	import { onAuthStateChanged } from 'firebase/auth';
-	import { getUserRole } from '$lib/auth';
-	import { auth } from '../../lib/Firebase';
 
 	export let options;
 	export let activePath;
@@ -16,7 +9,7 @@
 	{#each options as option}
 		<a href={option.path} class="nav-link" class:nav-link-active={activePath === option.path}>
 			<Icon name={option.icon} />
-			<span class="nav-text">{option.label}</span>
+			<!-- <span class="nav-text">{option.label}</span> -->
 		</a>
 	{/each}
 </nav>
@@ -41,8 +34,9 @@
 		overflow: hidden;
 		white-space: nowrap;
 		font-family: sans-serif;
-		font-size: 1rem;
+		font-size: 1.5rem;
 		color: black;
+		padding: 0.3rem;
 		/* text-decoration: none; */
 		/* -webkit-tap-highlight-color: transparent; */
 		/* transition: background-color 0.1s ease-in-out; */
