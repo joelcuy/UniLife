@@ -1,5 +1,5 @@
 <script>
-	import BottomNav from '$lib/components/BottomNav.svelte';
+	import BottomNav from '$lib/components/general/BottomNav.svelte';
 	import { page } from '$app/stores';
 	import { ROUTES } from '../../lib/routelist';
 	import { Navbar, NavbarBrand } from 'sveltestrap';

@@ -44,21 +44,6 @@
 			ecaPosts.push({ ...doc.data(), uid: doc.id });
 		});
 		isLoading = false;
-
-		// onSnapshot(
-		// 	collection(db, 'ecaPosts'),
-		// 	where('orgUidFk', '==', userUID),
-		// 	(collectionSnapshot) => {
-		// 		ecaPosts = [];
-		// 		collectionSnapshot.forEach((doc) => {
-		// 			// doc.data() is never undefined for query doc snapshots
-		// 			console.log(doc.id, ' => ', doc.data());
-		// 			ecaPosts.push({ ...doc.data(), uid: doc.id });
-		// 		});
-		// 		// console.log(orgRequests);
-		// 		isLoading = false;
-		// 	}
-		// );
 	});
 </script>
 
