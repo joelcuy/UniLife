@@ -1,14 +1,11 @@
 <script>
-	import { signOut, onAuthStateChanged } from 'firebase/auth';
+	import { signOut } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { auth } from '$lib/Firebase';
 	import { sendEmailVerification } from 'firebase/auth';
-	import { NavLink, Nav, Button, Spinner, Alert, Card, CardBody } from 'sveltestrap';
-	import { onMount, afterUpdate, onDestroy } from 'svelte';
+	import { Col, Row, Button, Alert, Card, CardBody } from 'sveltestrap';
+	import { afterUpdate, onDestroy } from 'svelte';
 	import { ROUTES } from '$lib/routelist';
-	import { Col, Container, Row } from 'sveltestrap';
-	import CustomCard from '$lib/components/CustomCard.svelte';
-	import { getUserRole } from '$lib/auth';
 
 	let showAlert = false;
 

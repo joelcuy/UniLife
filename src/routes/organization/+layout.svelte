@@ -6,7 +6,7 @@
 	import EmailVerification from '$lib/components/auth/EmailVerification.svelte';
 	import AccountInactive from '$lib/components/auth/AccountInactive.svelte';
 	import { Navbar, NavbarBrand } from 'sveltestrap';
-	import BottomNav from '$lib/components/BottomNav.svelte';
+	import BottomNav from '$lib/components/general/BottomNav.svelte';
 	import { page } from '$app/stores';
 	import { ROUTES } from '$lib/routelist';
 

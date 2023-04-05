@@ -1,5 +1,4 @@
 <script>
-	import CustomCard from '$lib/components/CustomCard.svelte';
 	import {
 		Icon,
 		Form,
@@ -7,7 +6,6 @@
 		Input,
 		Label,
 		Button,
-		Spinner,
 		Alert,
 		NavLink,
 		Nav,
@@ -15,14 +13,9 @@
 		InputGroupText
 	} from 'sveltestrap';
 	import { authCheck, checkEmptyValues } from '$lib/auth';
-	import {
-		createUserWithEmailAndPassword,
-		updateProfile,
-		sendEmailVerification
-	} from 'firebase/auth';
-	import { app, auth, db } from '$lib/Firebase';
-	import { createEventDispatcher } from 'svelte';
-	import { getFirestore, doc, setDoc, getDoc, addDoc, collection } from 'firebase/firestore';
+	import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+	import { auth, db } from '$lib/Firebase';
+	import { doc, setDoc, addDoc, collection } from 'firebase/firestore';
 	import { ROUTES } from '$lib/routelist';
 	import { goto } from '$app/navigation';
 
@@ -31,7 +24,6 @@
 	let about;
 	let password;
 	let passwordConfirmation;
-
 
 	let passwordState = 'password';
 
