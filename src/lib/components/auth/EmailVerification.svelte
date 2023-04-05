@@ -1,5 +1,5 @@
 <script>
-	import { signOut } from 'firebase/auth';
+	import { signout } from '$lib/auth';
 	import { goto } from '$app/navigation';
 	import { auth } from '$lib/Firebase';
 	import { sendEmailVerification } from 'firebase/auth';
@@ -48,18 +48,6 @@
 		timer = setInterval(() => {
 			cooldownCounter -= 1;
 		}, 1000);
-	}
-
-	async function signout() {
-		signOut(auth)
-			.then(() => {
-				// Sign-out successful.
-				goto(ROUTES.login);
-				console.log('signed out');
-			})
-			.catch((error) => {
-				// An error happened.
-			});
 	}
 
 	async function resendVerificationEmail() {
