@@ -45,7 +45,7 @@ export function authCheck(email, password, passwordConfirmation = undefined) {
 
 export function checkEmptyValues(...args) {
 	for (const [key, value] of Object.entries(Object.fromEntries(args))) {
-		if (!value) {
+		if (!value || (Array.isArray(value) && value.length === 0)) {
 			return { isError: true, message: `Please provide an input for ${key}` };
 		}
 	}

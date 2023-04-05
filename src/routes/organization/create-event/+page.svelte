@@ -1,54 +1,27 @@
 <script>
-	import {
-		FormGroup,
-		Button,
-		Form,
-		Label,
-		DropdownItem,
-		DropdownMenu,
-		DropdownToggle,
-		Dropdown,
-		Input
-	} from 'sveltestrap';
-	import { getStores } from '$app/stores';
-	import { app, auth, db } from '$lib/Firebase';
-	import { onMount } from 'svelte';
-	import { signOut, onAuthStateChanged } from 'firebase/auth';
-	import { goto } from '$app/navigation';
-	import { collection, doc, addDoc, getDoc, onSnapshot, Timestamp } from 'firebase/firestore';
-	import { ROUTES } from '$lib/routelist';
-	import { page } from '$app/stores';
-
-	let title;
-	let selectedCategories;
-	let startDatetime;
-	let endDatetime;
-
-	// let isLoading = true;
-	let ecaCategories = [];
+	import EventForm from '../../../lib/components/organization/EventForm.svelte';
+	import { db, storage } from '$lib/Firebase';
+	import { collection, doc, addDoc, setDoc } from 'firebase/firestore';
+	import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
 
-	let currentPageState = PAGE_STATES.loading;
+	let currentPageState = PAGE_STATES.form;
 
-	onMount(async () => {
-		onSnapshot(collection(db, 'ecaCategory'), (collectionSnapshot) => {
-			ecaCategories = [];
-			collectionSnapshot.forEach((doc) => {
-				// console.log(doc.id, ' => ', doc.data());
-				ecaCategories.push({ ...doc.data() });
-			});
-			// console.log(ecaCategories);
-			// isLoading = false;
-			currentPageState = PAGE_STATES.form;
-		});
-	});
+	async function handleCreateEvent(event) {
+		currentPageState = PAGE_STATES.loading;
 
-	async function handleCreateEvent() {
+		// Get data from component dispatcher
+		const title = event.detail.title;
+		const selectedCategories = event.detail.selectedCategories;
+		let startDatetime = event.detail.startDatetime;
+		let endDatetime = event.detail.endDatetime;
+		let postImages = event.detail.postImages;
 		// console.log(title);
 		// console.log(selectedCategories);
 		// console.log(startDatetime);
 		// console.log(endDatetime);
+		// console.log(postImages);
 		try {
 			const timestamp = new Date().toISOString();
 			startDatetime = new Date(`${startDatetime}:00.000Z`).toISOString();
@@ -62,59 +35,56 @@
 			});
 			// await setDoc(postRef, {});
 			console.log('ECA Post document wrtten with ID: ', postRef.id);
+
+			const imageUrls = await uploadImage(postRef, postImages);
+			// Save the image URLs to the Firestore document
+			await setDoc(doc(db, 'ecaPosts', postRef.id), { imageUrls: imageUrls }, { merge: true });
+
 			// goto(ROUTES.profile);
 		} catch (error) {
 			console.error('Error appending eca post data to Firestore:', error);
 		}
+		currentPageState = PAGE_STATES.complete;
 	}
 
-	async function handleSelect(event) {
-		selectedCategories = event.target.value; // logs the selected value
+	async function uploadImage(postRef, postImages) {
+		// const storage = getStorage();
+		const imageUrls = [];
+
+		// Upload images to Firebase Storage
+		for (const [index, file] of postImages.entries()) {
+			const filePath = `ecaPosts/${postRef.id}/${index}_${file.name}`;
+			const fileRef = ref(storage, filePath);
+
+			const uploadTask = uploadBytesResumable(fileRef, file);
+
+			// Wait for the upload to complete and get the download URL
+			await new Promise((resolve, reject) => {
+				uploadTask.on(
+					'state_changed',
+					null,
+					(error) => {
+						console.error('Error uploading image:', error);
+						reject(error);
+					},
+					async () => {
+						const downloadUrl = await getDownloadURL(fileRef);
+						imageUrls.push(downloadUrl);
+						resolve();
+					}
+				);
+			});
+		}
+
+		return imageUrls;
 	}
 </script>
 
 {#if currentPageState === PAGE_STATES.loading}
-	Loading...
+	Loading....
 {:else if currentPageState === PAGE_STATES.form}
 	<h1>Create New Event</h1>
-	<br />
-	<Form>
-		<FormGroup>
-			<Label class="font-weight-bold" for="name">Title</Label>
-			<Input type="text" name="name" id="name" bind:value={title} />
-		</FormGroup>
-		<FormGroup>
-			<Label for="category">Category</Label>
-			<Input type="select" name="select" id="category" on:change={handleSelect}>
-				{#each ecaCategories as category}
-					<option value={category.uid}>{category.name}</option>
-				{/each}
-			</Input>
-		</FormGroup>
-		<FormGroup>
-			<Label for="startDatetime">Event Start</Label>
-			<Input
-				type="datetime-local"
-				name="datetime"
-				id="startDatetime"
-				placeholder="datetime placeholder"
-				bind:value={startDatetime}
-			/>
-		</FormGroup>
-		<FormGroup>
-			<Label for="endDatetime">Event End</Label>
-			<Input
-				type="datetime-local"
-				name="datetime"
-				id="endDatetime"
-				placeholder="datetime placeholder"
-				bind:value={endDatetime}
-			/>
-		</FormGroup>
-		<FormGroup>
-			<Button color="primary" id="login-button" block on:click={handleCreateEvent}>Create</Button>
-		</FormGroup>
-	</Form>
+	<EventForm on:save={handleCreateEvent} />
 {:else if currentPageState === PAGE_STATES.complete}
 	doneeeeeeeee
 {/if}
