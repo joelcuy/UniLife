@@ -1,7 +1,8 @@
 <script>
 	import EventForm from '../../../lib/components/organization/EventForm.svelte';
-	import { db, storage } from '$lib/Firebase';
+	import { auth, db, storage } from '$lib/Firebase';
 	import { collection, doc, addDoc, setDoc } from 'firebase/firestore';
+	import { onAuthStateChanged } from 'firebase/auth';
 	import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
@@ -23,15 +24,27 @@
 		// console.log(endDatetime);
 		// console.log(postImages);
 		try {
+			let userUID;
 			const timestamp = new Date().toISOString();
 			startDatetime = new Date(`${startDatetime}:00.000Z`).toISOString();
 			endDatetime = new Date(`${endDatetime}:00.000Z`).toISOString();
+			const user = await new Promise((resolve, reject) => {
+				onAuthStateChanged(auth, (user) => {
+					if (user) {
+						resolve(user);
+					} else {
+						reject(new Error('Unable to get current user'));
+					}
+				});
+			});
+			userUID = user.uid;
 			const postRef = await addDoc(collection(db, 'ecaPosts'), {
 				title: title,
 				selectedCategories: selectedCategories,
 				startDatetime: startDatetime,
 				endDatetime: endDatetime,
-				creationDate: timestamp
+				creationDate: timestamp,
+				orgUidFk: userUID
 			});
 			// await setDoc(postRef, {});
 			console.log('ECA Post document wrtten with ID: ', postRef.id);
@@ -39,8 +52,6 @@
 			const imageUrls = await uploadImage(postRef, postImages);
 			// Save the image URLs to the Firestore document
 			await setDoc(doc(db, 'ecaPosts', postRef.id), { imageUrls: imageUrls }, { merge: true });
-
-			// goto(ROUTES.profile);
 		} catch (error) {
 			console.error('Error appending eca post data to Firestore:', error);
 		}
