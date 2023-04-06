@@ -1,7 +1,5 @@
 <script>
-	import {
-		signOut
-	} from 'firebase/auth';
+	import { signOut } from 'firebase/auth';
 	import { ListGroup, ListGroupItem, Nav, NavLink } from 'sveltestrap';
 	import {
 		Button,
@@ -28,6 +26,7 @@
 		onSnapshot
 	} from 'firebase/firestore';
 	import { ROUTES } from '../../lib/routelist';
+	import CenteredSpinner from '../../lib/components/general/CenteredSpinner.svelte';
 
 	let isLoading = true;
 	let orgRequests = [];
@@ -82,7 +81,7 @@
 
 <h4 class="ms-2">Organization Requests</h4>
 {#if isLoading}
-	Loading...
+	<CenteredSpinner />
 {:else}
 	{#each orgRequests as orgRequest}
 		<Card class="mb-2 mx-2">

@@ -18,6 +18,7 @@
 	import { doc, setDoc, addDoc, collection } from 'firebase/firestore';
 	import { ROUTES } from '$lib/routelist';
 	import { goto } from '$app/navigation';
+	import CenteredSpinner from '../../../../lib/components/general/CenteredSpinner.svelte';
 
 	let email;
 	let orgName;
@@ -204,7 +205,7 @@
 		</FormGroup>
 	</Form>
 {:else if currentPageState === PAGE_STATES.loading}
-	loading...
+	<CenteredSpinner />
 {:else if currentPageState === PAGE_STATES.complete}
 	Request submitted successfully
 {/if}

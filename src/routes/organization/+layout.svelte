@@ -5,10 +5,11 @@
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 	import EmailVerification from '$lib/components/auth/EmailVerification.svelte';
 	import AccountInactive from '$lib/components/auth/AccountInactive.svelte';
-	import { Navbar, NavbarBrand } from 'sveltestrap';
+	import { Navbar, NavbarBrand, Spinner, Container } from 'sveltestrap';
 	import BottomNav from '$lib/components/general/BottomNav.svelte';
 	import { page } from '$app/stores';
 	import { ROUTES } from '$lib/routelist';
+	import CenteredSpinner from '../../lib/components/general/CenteredSpinner.svelte';
 
 	const PAGE_STATES = Object.freeze({
 		loading: 1,
@@ -60,7 +61,7 @@
 
 <!-- Only allow access if role is organization -->
 {#if currentPageState === PAGE_STATES.loading}
-	loading...
+	<CenteredSpinner />
 {:else if currentPageState === PAGE_STATES.unauthorized}
 	<h1>Error 403: Access Denied</h1>
 	<p>You don't have permission to access this page.</p>
