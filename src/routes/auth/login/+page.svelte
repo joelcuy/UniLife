@@ -76,7 +76,7 @@
 		}
 	}
 
-	$: console.log(selectedRole);
+	// $: console.log(selectedRole);
 </script>
 
 <svelte:head>
