@@ -3,9 +3,10 @@ import { getAuth } from 'firebase/auth';
 import { getFunctions } from 'firebase/functions';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { PUBLIC_FIREBASE_API_KEY } from '$env/static/public';
 
 const firebaseConfig = {
-	apiKey: 'AIzaSyAq4ezH95mVvhY8FnM6Cg1oZxW-EZ-_VFw',
+	apiKey: PUBLIC_FIREBASE_API_KEY,
 	authDomain: 'unilife-bd39b.firebaseapp.com',
 	projectId: 'unilife-bd39b',
 	storageBucket: 'unilife-bd39b.appspot.com',
