@@ -1,5 +1,6 @@
 <script>
 	import { signout } from '$lib/auth';
+	import { customDateFormat } from '../../../lib/utils';
 	import {
 		Button,
 		Card,
@@ -11,12 +12,19 @@
 		CardTitle,
 		Nav,
 		NavLink,
-		FormGroup
+		Icon,
+		FormGroup,
+		Dropdown,
+		DropdownItem,
+		DropdownMenu,
+		DropdownToggle
 	} from 'sveltestrap';
 	import { auth, db, storage } from '$lib/Firebase';
 	import { collection, doc, addDoc, getDocs, onSnapshot, where, query } from 'firebase/firestore';
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { onMount } from 'svelte';
+	import { ROUTES } from '../../../lib/routelist';
+	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
 
 	let isLoading = true;
 	let ecaPosts = [];
@@ -49,30 +57,29 @@
 
 <h4>Your Events</h4>
 {#if isLoading}
-	Loading...
+	<CenteredSpinner />
 {:else}
 	{#each ecaPosts as ecaPost}
-		<Card>
+		<Card class="mb-2">
 			<CardHeader class="d-flex flex-row justify-content-between">
-				<CardTitle class="my-2">{ecaPost.title}</CardTitle>
-				<Nav>
-					<NavLink href="#" class="px-0">View Details</NavLink>
-				</Nav>
+				<CardTitle class="my-2 fs-6">{ecaPost.title}</CardTitle>
+				<Dropdown direction="left">
+					<DropdownToggle color="none" class="px-0"
+						><Icon name="three-dots-vertical" /></DropdownToggle
+					>
+					<DropdownMenu start>
+						<DropdownItem href={`${ROUTES.orgDashboard}/ykd8O8JoqaRvKB2iti6z`}>Edit</DropdownItem>
+						<!-- <DropdownItem divider /> -->
+						<DropdownItem class="text-danger">Delete</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
 			</CardHeader>
 			<CardBody>
-				<!-- <CardSubtitle>Email</CardSubtitle>
-				<CardText>{ecaPost.email}</CardText>
-				<CardSubtitle>About</CardSubtitle>
-				<CardText>{ecaPost.about}</CardText> -->
+				<CardText class="m-0 text-secondary"
+					>{customDateFormat(ecaPost.startDatetime.toDate())}</CardText
+				>
+				<CardText class="text-secondary">{ecaPost.location}</CardText>
 			</CardBody>
-			<CardFooter class="d-flex flex-row justify-content-end">
-				<!-- {#if ecaPost.requestStatus === 'Pending'}
-					<Button class="me-2" color="primary" on:click={() => {}}>Approve</Button>
-					<Button color="primary" outline>Reject</Button>
-				{:else}
-					{ecaPost.requestStatus.charAt(0).toUpperCase() + ecaPost.requestStatus.slice(1)}
-				{/if} -->
-			</CardFooter>
 		</Card>
 	{/each}
 {/if}
