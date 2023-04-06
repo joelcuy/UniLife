@@ -1,9 +1,10 @@
 <script>
 	import EventForm from '../../../lib/components/organization/EventForm.svelte';
 	import { auth, db, storage } from '$lib/Firebase';
-	import { collection, doc, addDoc, setDoc } from 'firebase/firestore';
+	import { collection, doc, addDoc, setDoc, Timestamp } from 'firebase/firestore';
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
 
 	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
 
@@ -14,6 +15,8 @@
 
 		// Get data from component dispatcher
 		const title = event.detail.title;
+		const description = event.detail.description;
+		const location = event.detail.location;
 		const selectedCategories = event.detail.selectedCategories;
 		let startDatetime = event.detail.startDatetime;
 		let endDatetime = event.detail.endDatetime;
@@ -25,9 +28,6 @@
 		// console.log(postImages);
 		try {
 			let userUID;
-			const timestamp = new Date().toISOString();
-			startDatetime = new Date(`${startDatetime}:00.000Z`).toISOString();
-			endDatetime = new Date(`${endDatetime}:00.000Z`).toISOString();
 			const user = await new Promise((resolve, reject) => {
 				onAuthStateChanged(auth, (user) => {
 					if (user) {
@@ -40,10 +40,12 @@
 			userUID = user.uid;
 			const postRef = await addDoc(collection(db, 'ecaPosts'), {
 				title: title,
+				description: description,
+				location: location,
 				selectedCategories: selectedCategories,
-				startDatetime: startDatetime,
-				endDatetime: endDatetime,
-				creationDate: timestamp,
+				startDatetime: Timestamp.fromDate(new Date(`${startDatetime}:00.000Z`)),
+				endDatetime: Timestamp.fromDate(new Date(`${endDatetime}:00.000Z`)),
+				creationDate: Timestamp.fromDate(new Date()),
 				orgUidFk: userUID
 			});
 			// await setDoc(postRef, {});
@@ -92,9 +94,9 @@
 </script>
 
 {#if currentPageState === PAGE_STATES.loading}
-	Loading....
+	<CenteredSpinner />
 {:else if currentPageState === PAGE_STATES.form}
-	<h1>Create New Event</h1>
+	<h4>Create New Event</h4>
 	<EventForm on:save={handleCreateEvent} />
 {:else if currentPageState === PAGE_STATES.complete}
 	doneeeeeeeee
