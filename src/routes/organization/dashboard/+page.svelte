@@ -25,6 +25,7 @@
 	import { onMount } from 'svelte';
 	import { ROUTES } from '../../../lib/routelist';
 	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
+	import { goto } from '$app/navigation';
 
 	let isLoading = true;
 	let ecaPosts = [];
@@ -53,6 +54,10 @@
 		});
 		isLoading = false;
 	});
+
+	// function handleDropdownToggleClick(event) {
+	// 	event.preventDefault();
+	// }
 </script>
 
 <h4>Your Events</h4>
@@ -63,16 +68,15 @@
 		<Card class="mb-2">
 			<CardHeader class="d-flex flex-row justify-content-between">
 				<CardTitle class="my-2 fs-6">{ecaPost.title}</CardTitle>
-				<Dropdown direction="left">
-					<DropdownToggle color="none" class="px-0"
-						><Icon name="three-dots-vertical" /></DropdownToggle
-					>
-					<DropdownMenu start>
+				<!-- <Dropdown>
+					<DropdownToggle color="none" class="px-0">
+						<Icon name="three-dots-vertical" />
+					</DropdownToggle>
+					<DropdownMenu end>
 						<DropdownItem href={`${ROUTES.orgDashboard}/${ecaPost.uid}`}>View Details</DropdownItem>
-						<!-- <DropdownItem divider /> -->
 						<DropdownItem class="text-danger">Delete</DropdownItem>
 					</DropdownMenu>
-				</Dropdown>
+				</Dropdown> -->
 			</CardHeader>
 			<CardBody>
 				<CardText class="m-0 text-secondary"
@@ -80,6 +84,17 @@
 				>
 				<CardText class="text-secondary">{ecaPost.location}</CardText>
 			</CardBody>
+			<CardFooter class="d-flex flex-row justify-content-end">
+				<Button
+					class="me-2"
+					color="primary"
+					outline
+					on:click={() => {
+						goto(`${ROUTES.orgDashboard}/${ecaPost.uid}`);
+					}}>Edit</Button
+				>
+				<Button color="primary">Delete</Button>
+			</CardFooter>
 		</Card>
 	{/each}
 {/if}
