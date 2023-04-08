@@ -12,6 +12,9 @@
 
 	let currentPageState = PAGE_STATES.loading;
 
+	export let isEditing = false;
+	export let formData;
+
 	let ecaCategories = [];
 
 	let isError = false;
@@ -23,10 +26,19 @@
 	let selectedCategories = undefined;
 	let startDatetime = undefined;
 	let endDatetime = undefined;
-	let postImages = [];
+	let existingImages = [];
+	let uploadPostImages = [];
+	let deletePostImages = [];
 	let dispatch = createEventDispatcher();
 
 	onMount(async () => {
+		if (formData) {
+			// console.log(formData);
+			title = formData.title;
+			description = formData.description;
+			location = formData.location;
+			existingImages = formData.images;
+		}
 		onSnapshot(collection(db, 'ecaCategory'), (collectionSnapshot) => {
 			ecaCategories = [];
 			collectionSnapshot.forEach((doc) => {
@@ -44,7 +56,7 @@
 			['Description', description],
 			['Location', location],
 			['Event Categories', selectedCategories],
-			['Post Image', postImages],
+			// ['Post Image', uploadPostImage],
 			['Start Datetime', startDatetime],
 			['End Datetime', endDatetime]
 		);
@@ -58,11 +70,16 @@
 				description: description,
 				location: location,
 				selectedCategories: selectedCategories,
-				postImages: postImages,
+				uploadPostImages: uploadPostImages,
+				deletePostImages: deletePostImages,
 				startDatetime: startDatetime,
 				endDatetime: endDatetime
 			});
 		}
+	}
+
+	function handleCancel() {
+		dispatch('cancel');
 	}
 
 	function handleSelect(event) {
@@ -70,16 +87,20 @@
 		const selectedOption = selectElement.options[selectElement.selectedIndex];
 		const selectedValue = selectedOption.value;
 		const selectedLabel = selectedOption.textContent;
-
 		// console.log('Selected value:', selectedValue);
 		// console.log('Selected label:', selectedLabel);
 		selectedCategories = { uid: selectedValue, name: selectedLabel }; // logs the selected value
 	}
 
-	function handleUpload(event) {
-		postImages = event.detail.files; // logs the selected value
+	function imageSelect(event) {
+		uploadPostImages = event.detail.imagesToUpload; // logs the selected value
+		deletePostImages = event.detail.imagesToDelete;
+		console.log(deletePostImages);
 		// console.log(postImages);
 	}
+
+	// $: console.log(selectedCategoryId);
+	// $: console.log(formData.selectedCategories.uid);
 </script>
 
 {#if currentPageState === PAGE_STATES.loading}
@@ -125,12 +146,15 @@
 				{#each ecaCategories as category}
 					<option value={category.uid}>{category.name}</option>
 				{/each}
+				<!-- <option>qwer</option>
+				<option selected>qwtwert</option>
+				<option>xcbvxcvb</option> -->
 			</Input>
 			<FormText color="muted">Categories help us improve discoverability of your event</FormText>
 		</FormGroup>
 		<FormGroup>
-			<Label for="imageUpload" class="custom-file-label">Images</Label>
-			<CustomImageUpload on:imageUpload={handleUpload} />
+			<Label for="imageUpload" class="custom-file-label">Images (Maximum 5 Images)</Label>
+			<CustomImageUpload {existingImages} on:imageSelect={imageSelect} />
 		</FormGroup>
 		<FormGroup>
 			<Label for="startDatetime">Event Start</Label>
@@ -152,9 +176,16 @@
 				bind:value={endDatetime}
 			/>
 		</FormGroup>
-		<FormGroup>
+		<!-- <div class={isEditing ? 'd-flex justify-content-between align-items-center' : ''}> -->
+		<FormGroup
+			class={isEditing ? 'd-flex justify-content-between align-items-center w-100 mt-4' : ''}
+		>
+			{#if isEditing}
+				<Button class="me-4" outline block color="primary" on:click={handleCancel}>Cancel</Button>
+			{/if}
 			<Button color="primary" id="login-button" block on:click={handleClickSave}>Save</Button>
 		</FormGroup>
+		<!-- </div> -->
 	</Form>
 {/if}
 

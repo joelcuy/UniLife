@@ -68,7 +68,7 @@
 						><Icon name="three-dots-vertical" /></DropdownToggle
 					>
 					<DropdownMenu start>
-						<DropdownItem href={`${ROUTES.orgDashboard}/ykd8O8JoqaRvKB2iti6z`}>Edit</DropdownItem>
+						<DropdownItem href={`${ROUTES.orgDashboard}/${ecaPost.uid}`}>View Details</DropdownItem>
 						<!-- <DropdownItem divider /> -->
 						<DropdownItem class="text-danger">Delete</DropdownItem>
 					</DropdownMenu>

@@ -20,7 +20,7 @@
 		const selectedCategories = event.detail.selectedCategories;
 		let startDatetime = event.detail.startDatetime;
 		let endDatetime = event.detail.endDatetime;
-		let postImages = event.detail.postImages;
+		let uploadPostImages = event.detail.uploadPostImages;
 		// console.log(title);
 		// console.log(selectedCategories);
 		// console.log(startDatetime);
@@ -51,22 +51,22 @@
 			// await setDoc(postRef, {});
 			console.log('ECA Post document wrtten with ID: ', postRef.id);
 
-			const imageUrls = await uploadImage(postRef, postImages);
+			const images = await uploadImage(postRef, uploadPostImages);
 			// Save the image URLs to the Firestore document
-			await setDoc(doc(db, 'ecaPosts', postRef.id), { imageUrls: imageUrls }, { merge: true });
+			await setDoc(doc(db, 'ecaPosts', postRef.id), { images: images }, { merge: true });
 		} catch (error) {
 			console.error('Error appending eca post data to Firestore:', error);
 		}
 		currentPageState = PAGE_STATES.complete;
 	}
 
-	async function uploadImage(postRef, postImages) {
+	async function uploadImage(postRef, uploadPostImages) {
 		// const storage = getStorage();
-		const imageUrls = [];
+		const images = [];
 
 		// Upload images to Firebase Storage
-		for (const [index, file] of postImages.entries()) {
-			const filePath = `ecaPosts/${postRef.id}/${index}_${file.name}`;
+		for (const [index, file] of uploadPostImages.entries()) {
+			const filePath = `ecaPosts/${postRef.id}/${file.name}`;
 			const fileRef = ref(storage, filePath);
 
 			const uploadTask = uploadBytesResumable(fileRef, file);
@@ -82,14 +82,14 @@
 					},
 					async () => {
 						const downloadUrl = await getDownloadURL(fileRef);
-						imageUrls.push(downloadUrl);
+						images.push({ filePath: filePath, URL: downloadUrl });
 						resolve();
 					}
 				);
 			});
 		}
 
-		return imageUrls;
+		return images;
 	}
 </script>
 

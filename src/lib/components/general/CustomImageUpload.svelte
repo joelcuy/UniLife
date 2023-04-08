@@ -21,23 +21,37 @@
 	import { page } from '$app/stores';
 	import { createEventDispatcher } from 'svelte';
 
+	export let existingImages = [];
+	let imagesToDelete = [];
+
+	let imagesToUpload = [];
 	let dispatch = createEventDispatcher();
 
-	let files = [];
-	function handleFileUpload(event) {
-		const newFiles = Array.from(event.target.files);
+	function handleFileSelection(event) {
+		const newSelectionImages = Array.from(event.target.files);
 		// Ensure files are not overwritten but appended
-		files = [...files, ...newFiles];
+		imagesToUpload = [...imagesToUpload, ...newSelectionImages];
+		imagesToUpload.splice(5, imagesToUpload.length - 5);
 	}
 
-	function removeImage(index) {
-		files.splice(index, 1);
-		files = [...files];
+	function removeImage(index, isNew) {
+		if (isNew) {
+			imagesToUpload.splice(index, 1);
+			imagesToUpload = [...imagesToUpload];
+		} else {
+			console.log('Remove:', existingImages[index]);
+			imagesToDelete.push(existingImages[index]);
+			imagesToDelete = [...imagesToDelete];
+			existingImages.splice(index, 1);
+			existingImages = [...existingImages];
+			// imagesToDelete.push(existingImages[index]);
+		}
 	}
 
-	$: if (files) {
-		dispatch('imageUpload', {
-			files
+	$: {
+		dispatch('imageSelect', {
+			imagesToUpload: imagesToUpload,
+			imagesToDelete: imagesToDelete
 		});
 	}
 </script>
@@ -47,20 +61,31 @@
 	name="file"
 	id="imageUpload"
 	multiple
+	disabled={imagesToUpload.length + existingImages.length >= 5 ? true : false}
 	accept="image/*"
-	on:change={handleFileUpload}
+	on:change={handleFileSelection}
 	class="custom-file-input"
 />
 <FormText color="muted">
-	Total files selected: {files.length}
+	Total files selected: {imagesToUpload.length + existingImages.length}
 </FormText>
 <div class="image-preview">
-	{#each files as file, index}
+	{#each existingImages as image, index}
 		<div class="image-container">
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<img src={URL.createObjectURL(file)} alt={file.name} title="Click to remove" />
+			<img src={image.URL} alt={image.filePath} title="Click to remove" />
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<span class="remove-icon" on:click={() => removeImage(index)}>
+			<span class="remove-icon" on:click={() => removeImage(index, false)}>
+				<i class="fas fa-times" />
+			</span>
+		</div>
+	{/each}
+	{#each imagesToUpload as image, index}
+		<div class="image-container">
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<img src={URL.createObjectURL(image)} alt={image.name} title="Click to remove" />
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<span class="remove-icon" on:click={() => removeImage(index, true)}>
 				<i class="fas fa-times" />
 			</span>
 		</div>
@@ -90,8 +115,8 @@
 	}
 
 	.image-preview img {
-		max-width: 40vw;
-		max-height: 10vh;
+		max-width: 45vw;
+		max-height: 15vh;
 		/* margin-right: 0.5rem; */
 		cursor: pointer;
 	}
