@@ -10,6 +10,7 @@ export const ROUTES = Object.freeze({
 
 	//Organization
 	orgDashboard: '/organization/dashboard',
+	// orgEventDetail: '/organization/dashboard/detail',
 	orgCreateEvent: '/organization/create-event',
 	orgProfile: '/organization/profile',
 

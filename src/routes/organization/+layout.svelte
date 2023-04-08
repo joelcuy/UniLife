@@ -82,6 +82,6 @@
 
 <style>
 	.nav-compensation {
-		padding: 4rem 1rem;
+		padding: 4.5rem 1rem;
 	}
 </style>
