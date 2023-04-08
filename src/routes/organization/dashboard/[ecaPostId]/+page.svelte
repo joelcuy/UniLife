@@ -223,7 +223,7 @@
 		</div>
 		<div class="event-detail-item">
 			<h6>Event Start</h6>
-			<p>{customDateFormat(ecaPostData.endDatetime.toDate())}</p>
+			<p>{customDateFormat(ecaPostData.startDatetime.toDate())}</p>
 		</div>
 		<div class="event-detail-item">
 			<h6>Event End</h6>

@@ -7,6 +7,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { checkEmptyValues } from '$lib/auth';
 	import CenteredSpinner from '../general/CenteredSpinner.svelte';
+	import { firestoreTimestampToDatetimeLocal } from '../../utils';
 
 	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
 
@@ -38,6 +39,8 @@
 			description = formData.description;
 			location = formData.location;
 			existingImages = formData.images;
+			startDatetime = firestoreTimestampToDatetimeLocal(formData.startDatetime);
+			endDatetime = firestoreTimestampToDatetimeLocal(formData.endDatetime);
 		}
 		onSnapshot(collection(db, 'ecaCategory'), (collectionSnapshot) => {
 			ecaCategories = [];
@@ -51,6 +54,7 @@
 	});
 
 	function handleClickSave() {
+		console.log(startDatetime);
 		const validationResult = checkEmptyValues(
 			['Title', title],
 			['Description', description],
