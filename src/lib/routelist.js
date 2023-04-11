@@ -13,6 +13,7 @@ export const ROUTES = Object.freeze({
 	// orgEventDetail: '/organization/dashboard/detail',
 	orgCreateEvent: '/organization/create-event',
 	orgProfile: '/organization/profile',
+	orgEditProfile: '/organization/profile/edit',
 
 	//Student
 	feed: '/student/feed',
