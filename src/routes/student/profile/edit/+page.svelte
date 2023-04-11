@@ -1,5 +1,5 @@
 <script>
-	import CustomProfileImageInput from './CustomProfileImageInput.svelte';
+	import CustomProfileImageInput from '$lib/components/general/CustomProfileImageInput.svelte';
 
 	import EventCategoryModal from './EventCategoryModal.svelte';
 

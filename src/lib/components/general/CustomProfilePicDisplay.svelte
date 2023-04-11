@@ -1,13 +1,13 @@
 <script>
 	import { FormGroup, Button } from 'sveltestrap';
-	import { auth, app, db } from '../../../lib/Firebase';
+	import { auth, app, db } from '../../Firebase';
 	import { onMount } from 'svelte';
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { getFirestore, doc, onSnapshot, getDoc } from 'firebase/firestore';
 	import { ROUTES } from '$lib/routelist';
 	import blankProfilePic from '$lib/assets/blankProfilePic.png';
-	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
+	import CenteredSpinner from './CenteredSpinner.svelte';
 
 	export let profilePic;
 </script>

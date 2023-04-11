@@ -1,5 +1,5 @@
 <script>
-	import CustomProfilePicDisplay from './CustomProfilePicDisplay.svelte';
+	import CustomProfilePicDisplay from '$lib/components/general/CustomProfilePicDisplay.svelte';
 
 	import { FormGroup, Button } from 'sveltestrap';
 	import { auth, app, db } from '../../../lib/Firebase';
