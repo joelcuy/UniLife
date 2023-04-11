@@ -1,7 +1,7 @@
 <script>
 	import CustomProfileImageInput from '$lib/components/general/CustomProfileImageInput.svelte';
 
-	import EventCategoryModal from './EventCategoryModal.svelte';
+	import EventCategoryModal from '$lib/components/general/EventCategoryModal.svelte';
 
 	import { FormGroup, Button, Form, Label, Input, FormText, Icon } from 'sveltestrap';
 	import { getStores } from '$app/stores';
