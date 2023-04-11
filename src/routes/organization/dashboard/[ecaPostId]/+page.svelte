@@ -47,6 +47,7 @@
 	});
 
 	async function handleEditEvent(event) {
+		currentPageState = PAGE_STATES.loading;
 		// Get data from component dispatcher
 		const title = event.detail.title;
 		const description = event.detail.description;
