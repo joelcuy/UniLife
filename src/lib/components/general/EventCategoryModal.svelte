@@ -15,26 +15,9 @@
 		ListGroup,
 		ListGroupItem
 	} from 'sveltestrap';
-	import { getStores } from '$app/stores';
 	import { app, auth, db } from '$lib/Firebase';
 	import { onMount } from 'svelte';
-	import { signOut, onAuthStateChanged } from 'firebase/auth';
-	import { goto } from '$app/navigation';
-	import {
-		getFirestore,
-		doc,
-		setDoc,
-		getDocs,
-		getDoc,
-		query,
-		collection,
-		orderBy,
-		limit
-	} from 'firebase/firestore';
-	import { ROUTES } from '$lib/routelist';
-	import { page } from '$app/stores';
-	import blankProfilePic from '$lib/assets/blankProfilePic.png';
-	import CenteredSpinner from '../../../../lib/components/general/CenteredSpinner.svelte';
+	import { getDocs, query, collection, orderBy } from 'firebase/firestore';
 
 	export let isOpen;
 	export let selectedCategories = [];
