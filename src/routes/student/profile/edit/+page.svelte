@@ -1,31 +1,80 @@
 <script>
-	import { FormGroup, Button, Form, Label, Input } from 'sveltestrap';
+	import EventCategoryModal from './EventCategoryModal.svelte';
+
+	import { FormGroup, Button, Form, Label, Input, FormText, Badge } from 'sveltestrap';
 	import { getStores } from '$app/stores';
 	import { app, auth, db } from '$lib/Firebase';
 	import { onMount } from 'svelte';
 	import { signOut, onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
-	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+	import {
+		getFirestore,
+		doc,
+		setDoc,
+		getDocs,
+		getDoc,
+		query,
+		collection,
+		orderBy,
+		limit
+	} from 'firebase/firestore';
 	import { ROUTES } from '$lib/routelist';
 	import { page } from '$app/stores';
-
+	import blankProfilePic from '$lib/assets/blankProfilePic.png';
+	import CenteredSpinner from '../../../../lib/components/general/CenteredSpinner.svelte';
 
 	let userUID;
 	let name;
 	let educationIns;
 	let course;
 	let bio;
+	let userData;
+	let selectedCategories;
+
+	let isLoading = true;
+
+	// For Modal
+	let open = false;
+	const toggleAlways = () => {
+		open = true;
+	};
 
 	// TODO update this
-	onMount(() => {
-		// userUID = $currentUserData.uid;
-		// name = $currentUserData.name;
-		// educationIns = $currentUserData.educationInstitution;
-		// course = $currentUserData.course;
-		// bio = $currentUserData.bio;
+	onMount(async () => {
+		// console.log($currentUserData);
+		onAuthStateChanged(auth, async (user) => {
+			// User is signed in, read data from Firestore
+			userUID = user.uid;
+			try {
+				const userRef = doc(db, 'users', userUID);
+				const userDocSnap = await getDoc(userRef);
+
+				if (userDocSnap.exists()) {
+					console.log('Document data:', userDocSnap.data());
+					userData = userDocSnap.data();
+					name = userData.name;
+					educationIns = userData.educationInstitution;
+					course = userData.course;
+					bio = userData.bio;
+					selectedCategories = userData.eventPreferences;
+
+					// Write to Svelte store for overall app use
+					// currentUserData.set({ ...userData, uid: userUID });
+				} else {
+					// doc.data() will be undefined in this case
+					console.log('No such document!');
+				}
+				console.log('Successful data read from Firestore');
+			} catch (error) {
+				console.error('Error reading user data from Firestore:', error);
+			}
+
+			isLoading = false;
+		});
 	});
 
 	async function handleSaveProfile() {
+		isLoading = true;
 		try {
 			const userRef = doc(db, 'users', userUID);
 			await setDoc(
@@ -34,7 +83,8 @@
 					name: name,
 					educationInstitution: educationIns,
 					course: course,
-					bio: bio
+					bio: bio,
+					eventPreferences: selectedCategories
 				},
 				{ merge: true }
 			);
@@ -46,17 +96,16 @@
 	}
 </script>
 
-<div class="page-container">
-	<h1>Edit Profile</h1>
-	<p>This information will appear on your public profile</p>
+<h4>Edit Profile</h4>
+{#if isLoading}
+	<CenteredSpinner />
+{:else}
+	<!-- <p>This information will appear on your public profile</p> -->
 	<div class="profile-pic">
-		<div
-			class="image"
-			style="background-image:url(https://images.unsplash.com/photo-1603775020644-eb8decd79994?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXQlMjBwaG90b2dyYXBoeXxlbnwwfHwwfHw%3D&w=1000&q=80)"
-		/>
+		<div class="image" style="background-image:url({blankProfilePic})" />
 	</div>
 	<br />
-	<Form on:submit={handleSaveProfile}>
+	<Form>
 		<FormGroup>
 			<Label class="font-weight-bold" for="name">Name</Label>
 			<Input type="text" name="name" id="name" bind:value={name} />
@@ -74,16 +123,27 @@
 			<Input type="textarea" name="bio" id="bio" bind:value={bio} />
 		</FormGroup>
 		<FormGroup>
-			<Button color="primary" id="login-button" block>Save Changes</Button>
+			<Label for="category">Event Preferences</Label>
+			<div class="fs-4 mb-3">
+				{#each selectedCategories as category}
+					<!-- <Badge color="secondary">{category.name}</Badge> -->
+					<Button disabled size="sm" class="me-2">{category.name}</Button>
+				{/each}
+			</div>
+			<Button outline block color="primary" on:click={toggleAlways}>Edit</Button>
+			<FormText color="muted">Event Preferences help us display events relevant to you</FormText>
+		</FormGroup>
+		<FormGroup>
+			<Button color="primary" id="login-button" block on:click={handleSaveProfile}
+				>Save Changes</Button
+			>
 		</FormGroup>
 	</Form>
-</div>
+{/if}
+
+<EventCategoryModal bind:isOpen={open} bind:selectedCategories />
 
 <style>
-	.page-container {
-		padding: 1rem;
-	}
-
 	.profile-pic {
 		width: 45%;
 		margin: auto;

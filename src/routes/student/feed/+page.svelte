@@ -8,7 +8,4 @@
 	import { signout } from '$lib/auth.js';
 </script>
 
-<h1>Student Home</h1>
-<FormGroup>
-	<Button color="primary" id="login-button" block on:click={signout}>SignOut</Button>
-</FormGroup>
+<h4>Student Home</h4>

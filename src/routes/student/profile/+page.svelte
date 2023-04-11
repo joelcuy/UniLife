@@ -6,62 +6,66 @@
 	import { goto } from '$app/navigation';
 	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 	import { ROUTES } from '$lib/routelist';
+	import blankProfilePic from '$lib/assets/blankProfilePic.png';
+	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
 
 	let userData = {};
+	let isLoading = true;
 
 	onMount(async () => {
 		// console.log($currentUserData);
 		onAuthStateChanged(auth, async (user) => {
-			if (user) {
-				// User is signed in, read data from Firestore
-				const userUID = user.uid;
-				try {
-					const userRef = doc(db, 'users', userUID);
-					const userDocSnap = await getDoc(userRef);
+			// User is signed in, read data from Firestore
+			const userUID = user.uid;
+			try {
+				const userRef = doc(db, 'users', userUID);
+				const userDocSnap = await getDoc(userRef);
 
-					if (userDocSnap.exists()) {
-						console.log('Document data:', userDocSnap.data());
-						userData = userDocSnap.data();
+				if (userDocSnap.exists()) {
+					console.log('Document data:', userDocSnap.data());
+					userData = userDocSnap.data();
 
-						// Write to Svelte store for overall app use
-						// currentUserData.set({ ...userData, uid: userUID });
-					} else {
-						// doc.data() will be undefined in this case
-						console.log('No such document!');
-					}
-					console.log('Successful data read from Firestore');
-				} catch (error) {
-					console.error('Error reading user data from Firestore:', error);
+					// Write to Svelte store for overall app use
+					// currentUserData.set({ ...userData, uid: userUID });
+				} else {
+					// doc.data() will be undefined in this case
+					console.log('No such document!');
 				}
-			} else {
-				console.log('no current user');
+				console.log('Successful data read from Firestore');
+				isLoading = false;
+			} catch (error) {
+				console.error('Error reading user data from Firestore:', error);
 			}
 		});
 	});
 </script>
 
-<!-- <div class="mask">
-	<img
-		alt="asdf"
-		src="https://images.unsplash.com/photo-1603775020644-eb8decd79994?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXQlMjBwaG90b2dyYXBoeXxlbnwwfHwwfHw%3D&w=1000&q=80"
-	/>
-</div> -->
-<!-- <img alt="asdf" src="https://picsum.photos/id/426/400/600.jpg" /> -->
-<div class="profile-pic">
-	<div
-		class="image"
-		style="background-image:url(https://media.licdn.com/dms/image/C4E03AQHAl2fCMkjdDg/profile-displayphoto-shrink_800_800/0/1622877807288?e=2147483647&v=beta&t=LDXFI0565H0IZltUmKWo12OUTouBkCxoz3vwteQ8Zc4)"
-	/>
-</div>
-
-<h1>{userData.name}</h1>
-<br />
-<h5>Education Institution</h5>
-<p>{userData.educationInstitution}</p>
-<h5>Course of Study</h5>
-<p>{userData.course}</p>
-<h5>Bio</h5>
-<p>{userData.bio}</p>
+{#if isLoading}
+	<CenteredSpinner />
+{:else}
+	<div class="profile-pic">
+		<div class="image" style="background-image:url({blankProfilePic})" />
+	</div>
+	<h3 class:text-muted={!userData.name} class="text-center">
+		{userData.name || 'No Name Provided'}
+	</h3>
+	<br />
+	<h5>Education Institution</h5>
+	<p class:text-muted={!userData.educationInstitution}>
+		{userData.educationInstitution || 'Not set'}
+	</p>
+	<h5>Course of Study</h5>
+	<p class:text-muted={!userData.course}>{userData.course || 'Not set'}</p>
+	<h5>Bio</h5>
+	<p class:text-muted={!userData.bio}>{userData.bio || 'Not set'}</p>
+	<h5>Event Preferences</h5>
+	<div class="fs-4 mb-3">
+		{#each userData.eventPreferences as category}
+			<!-- <Badge color="secondary">{category.name}</Badge> -->
+			<Button disabled size="sm" class="me-2">{category.name}</Button>
+		{/each}
+	</div>
+{/if}
 
 <FormGroup>
 	<Button
@@ -77,11 +81,6 @@
 </FormGroup>
 
 <style>
-
-	h1 {
-		text-align: center;
-	}
-
 	p {
 		text-align: justify;
 	}
