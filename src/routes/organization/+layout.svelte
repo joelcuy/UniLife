@@ -10,6 +10,7 @@
 	import { page } from '$app/stores';
 	import { ROUTES } from '$lib/routelist';
 	import CenteredSpinner from '../../lib/components/general/CenteredSpinner.svelte';
+	import TopNav from '../../lib/components/general/TopNav.svelte';
 
 	const PAGE_STATES = Object.freeze({
 		loading: 1,
@@ -70,10 +71,7 @@
 {:else if currentPageState === PAGE_STATES.pendingActivation}
 	<AccountInactive />
 {:else if currentPageState === PAGE_STATES.accessible}
-	<Navbar color="primary" dark class="fixed-top">
-		<NavbarBrand class="mx-auto">UniLife</NavbarBrand>
-		<!-- <NavbarBrand class="mx-auto" href={ROUTES.root}>UniLife</NavbarBrand> -->
-	</Navbar>
+	<TopNav />
 	<div class="nav-compensation">
 		<slot />
 	</div>
