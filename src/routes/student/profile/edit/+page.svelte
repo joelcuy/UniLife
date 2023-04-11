@@ -1,9 +1,11 @@
 <script>
+	import CustomProfileImageInput from './CustomProfileImageInput.svelte';
+
 	import EventCategoryModal from './EventCategoryModal.svelte';
 
-	import { FormGroup, Button, Form, Label, Input, FormText, Badge } from 'sveltestrap';
+	import { FormGroup, Button, Form, Label, Input, FormText, Icon } from 'sveltestrap';
 	import { getStores } from '$app/stores';
-	import { app, auth, db } from '$lib/Firebase';
+	import { app, auth, db, storage } from '$lib/Firebase';
 	import { onMount } from 'svelte';
 	import { signOut, onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
@@ -22,15 +24,24 @@
 	import { page } from '$app/stores';
 	import blankProfilePic from '$lib/assets/blankProfilePic.png';
 	import CenteredSpinner from '../../../../lib/components/general/CenteredSpinner.svelte';
+	import {
+		ref,
+		uploadBytesResumable,
+		getDownloadURL,
+		listAll,
+		deleteObject
+	} from 'firebase/storage';
 
+	let userData;
 	let userUID;
 	let name;
 	let educationIns;
 	let course;
 	let bio;
-	let userData;
+	let profilePic;
 	let selectedCategories;
 
+	let imageFile;
 	let isLoading = true;
 
 	// For Modal
@@ -38,6 +49,9 @@
 	const toggleAlways = () => {
 		open = true;
 	};
+
+	const PROFILE_PIC_STATES = Object.freeze({ noChange: 1, remove: 2, upload: 3 });
+	let currentprofilePicState = PROFILE_PIC_STATES.noChange;
 
 	// TODO update this
 	onMount(async () => {
@@ -56,6 +70,7 @@
 					educationIns = userData.educationInstitution;
 					course = userData.course;
 					bio = userData.bio;
+					profilePic = userData.profilePic;
 					selectedCategories = userData.eventPreferences;
 
 					// Write to Svelte store for overall app use
@@ -73,8 +88,40 @@
 		});
 	});
 
+	// function handleProfilePicChange(event) {
+	// 	if (event.detail) {
+	// 		imageFile = event.detail.image;
+	// 	}
+
+	// 	console.log(event.detail);
+	// }
+
+	function handleProfilePicInput(event) {
+		imageFile = event.detail.image;
+		currentprofilePicState = PROFILE_PIC_STATES.upload;
+	}
+
+	function handleProfilePicRemove(event) {
+		currentprofilePicState = PROFILE_PIC_STATES.remove;
+	}
+
 	async function handleSaveProfile() {
 		isLoading = true;
+
+		if (currentprofilePicState === PROFILE_PIC_STATES.upload) {
+			// If new image selected, delete previous and reupload
+			if (profilePic) {
+				await deleteProfilePic();
+			}
+			uploadProfilePic();
+		} else if (currentprofilePicState === PROFILE_PIC_STATES.remove) {
+			await deleteProfilePic();
+		}
+		await setProfileDetails();
+		goto(ROUTES.profile);
+	}
+
+	async function setProfileDetails() {
 		try {
 			const userRef = doc(db, 'users', userUID);
 			await setDoc(
@@ -89,9 +136,55 @@
 				{ merge: true }
 			);
 			console.log('User data appended to Firestore');
-			goto(ROUTES.profile);
 		} catch (error) {
 			console.error('Error appending user data to Firestore:', error);
+		}
+	}
+
+	async function deleteProfilePic() {
+		const filePath = profilePic.filePath;
+		// console.log(filePath);
+		const fileRef = ref(storage, filePath);
+
+		// Delete the file
+		deleteObject(fileRef)
+			.then(() => {
+				// File deleted successfully
+			})
+			.catch((error) => {
+				console.error('Error deleting image:', error);
+			});
+
+		// Save the image URLs to the Firestore document
+		await setDoc(doc(db, 'users', userUID), { profilePic: null }, { merge: true });
+	}
+
+	async function uploadProfilePic() {
+		try {
+			const filePath = `profilepic/${userUID}/${imageFile.name}`;
+			const fileRef = ref(storage, filePath);
+			const uploadTask = uploadBytesResumable(fileRef, imageFile);
+
+			// Wait for the upload to complete and get the download URL
+			await new Promise((resolve, reject) => {
+				uploadTask.on(
+					'state_changed',
+					null,
+					(error) => {
+						console.error('Error uploading image:', error);
+						reject(error);
+					},
+					async () => {
+						const downloadUrl = await getDownloadURL(fileRef);
+						profilePic = { filePath: filePath, URL: downloadUrl };
+						resolve();
+					}
+				);
+			});
+			// Save the image URLs to the Firestore document
+			await setDoc(doc(db, 'users', userUID), { profilePic: profilePic }, { merge: true });
+		} catch (error) {
+			console.error('Error uploading image to storage:', error);
 		}
 	}
 </script>
@@ -100,12 +193,15 @@
 {#if isLoading}
 	<CenteredSpinner />
 {:else}
-	<!-- <p>This information will appear on your public profile</p> -->
-	<div class="profile-pic">
-		<div class="image" style="background-image:url({blankProfilePic})" />
-	</div>
-	<br />
+	<!-- <p>These information will appear on your public profile</p> -->
 	<Form>
+		<FormGroup>
+			<CustomProfileImageInput
+				on:upload={handleProfilePicInput}
+				on:remove={handleProfilePicRemove}
+				currentImage={profilePic ? profilePic.URL : undefined}
+			/>
+		</FormGroup>
 		<FormGroup>
 			<Label class="font-weight-bold" for="name">Name</Label>
 			<Input type="text" name="name" id="name" bind:value={name} />
@@ -147,36 +243,4 @@
 <EventCategoryModal bind:isOpen={open} bind:selectedCategories />
 
 <style>
-	.profile-pic {
-		width: 45%;
-		margin: auto;
-	}
-
-	div.image {
-		/* make it responsive */
-		max-width: 100%;
-		width: 100%;
-		height: auto;
-		display: block;
-		/* div height to be the same as width*/
-		padding-top: 100%;
-
-		/* make it a circle */
-		border-radius: 50%;
-
-		/* Centering on image`s center*/
-		background-position-y: center;
-		background-position-x: center;
-		background-repeat: no-repeat;
-
-		/* it makes the clue thing, takes smaller dimension to fill div */
-		background-size: cover;
-
-		/* it is optional, for making this div centered in parent*/
-		margin: 0 auto;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-	}
 </style>

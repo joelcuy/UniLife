@@ -1,15 +1,17 @@
 <script>
+	import CustomProfilePicDisplay from './CustomProfilePicDisplay.svelte';
+
 	import { FormGroup, Button } from 'sveltestrap';
 	import { auth, app, db } from '../../../lib/Firebase';
 	import { onMount } from 'svelte';
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
-	import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+	import { getFirestore, doc, onSnapshot, getDoc } from 'firebase/firestore';
 	import { ROUTES } from '$lib/routelist';
 	import blankProfilePic from '$lib/assets/blankProfilePic.png';
 	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
 
-	let userData = {};
+	let userData;
 	let isLoading = true;
 
 	onMount(async () => {
@@ -19,18 +21,12 @@
 			const userUID = user.uid;
 			try {
 				const userRef = doc(db, 'users', userUID);
-				const userDocSnap = await getDoc(userRef);
+				// const userDocSnap = await getDoc(userRef);
 
-				if (userDocSnap.exists()) {
-					console.log('Document data:', userDocSnap.data());
+				onSnapshot(userRef, (userDocSnap) => {
+					console.log('Real-time update:', userDocSnap.data());
 					userData = userDocSnap.data();
-
-					// Write to Svelte store for overall app use
-					// currentUserData.set({ ...userData, uid: userUID });
-				} else {
-					// doc.data() will be undefined in this case
-					console.log('No such document!');
-				}
+				});
 				console.log('Successful data read from Firestore');
 				isLoading = false;
 			} catch (error) {
@@ -40,12 +36,10 @@
 	});
 </script>
 
-{#if isLoading}
+{#if !userData}
 	<CenteredSpinner />
 {:else}
-	<div class="profile-pic">
-		<div class="image" style="background-image:url({blankProfilePic})" />
-	</div>
+	<CustomProfilePicDisplay profilePic={userData.profilePic} />
 	<h4 class:text-muted={!userData.name} class="text-center">
 		{userData.name || 'No Name Provided'}
 	</h4>
@@ -84,40 +78,4 @@
 </FormGroup>
 
 <style>
-	p {
-		text-align: justify;
-	}
-
-	.profile-pic {
-		width: 45%;
-		margin: auto;
-	}
-
-	div.image {
-		/* make it responsive */
-		max-width: 100%;
-		width: 100%;
-		height: auto;
-		display: block;
-		/* div height to be the same as width*/
-		padding-top: 100%;
-
-		/* make it a circle */
-		border-radius: 50%;
-
-		/* Centering on image`s center*/
-		background-position-y: center;
-		background-position-x: center;
-		background-repeat: no-repeat;
-
-		/* it makes the clue thing, takes smaller dimension to fill div */
-		background-size: cover;
-
-		/* it is optional, for making this div centered in parent*/
-		margin: 0 auto;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-	}
 </style>
