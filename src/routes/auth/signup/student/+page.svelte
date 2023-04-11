@@ -27,7 +27,7 @@
 				const userRef = doc(db, 'users', userCredential.user.uid);
 				await setDoc(userRef, {
 					role: 'student',
-					email: 'email'
+					email: email
 				});
 				console.log('Student data appended to Firestore');
 				await sendEmailVerification(userCredential.user);
@@ -37,7 +37,7 @@
 					goto(ROUTES.feed);
 				} else {
 					isError = true;
-					errorMessage = "Error signing up, try again later.";
+					errorMessage = 'Error signing up, try again later.';
 				}
 			} catch (error) {
 				console.error('Error during signup:', error);
@@ -52,7 +52,7 @@
 <Nav>
 	<NavLink class="p-0" href={ROUTES.signup}><Icon name="arrow-left" /> Back</NavLink>
 </Nav>
-	<h4 class="text-center">Create Student Account</h4>
+<h4 class="text-center">Create Student Account</h4>
 <SignUp on:clickSignup={signUp} />
 
 <style>
