@@ -24,7 +24,7 @@
 		header="Menu"
 	>
 		<ListGroup flush>
-			<ListGroupItem class="px-0" tag="button" action on:click={signout}
+			<ListGroupItem class="px-0" tag="button" action on:click={()=>{}}
 				><Icon name="exclamation-triangle-fill " class="me-3" />Report an Issue</ListGroupItem
 			>
 			<ListGroupItem class="px-0" tag="button" action on:click={signout}

@@ -17,7 +17,7 @@
 	import { checkEmptyValues } from '$lib/auth';
 	import CenteredSpinner from '../general/CenteredSpinner.svelte';
 	import { firestoreTimestampToDatetimeLocal } from '../../utils';
-	import EventCategoryModal from '../../../routes/student/profile/edit/EventCategoryModal.svelte';
+	import EventCategoryModal from '$lib/components/general/EventCategoryModal.svelte';
 
 	// Controls page states
 	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
