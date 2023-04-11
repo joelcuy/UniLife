@@ -27,23 +27,20 @@
 		const path = window.location.pathname;
 		const pathParts = path.split('/');
 		const ecaPostId = pathParts[pathParts.length - 1];
+
+		// Images upload take some time, solution is to call reload upon finish editing and manually updatefirestore onMount
 		await updateFirestoreImageReference(ecaPostId);
 
 		const postRef = doc(db, 'ecaPosts', ecaPostId);
 		const postDocSnap = await getDoc(postRef);
 
 		if (postDocSnap.exists()) {
-			// console.log('Document data:', userDocSnap.data());
-			// orgRequests.push({ ...doc.data(), uid: doc.id });
 			ecaPostData = { ...postDocSnap.data(), uid: postDocSnap.id };
-			// userRole = userData.role;
-			// console.log(userRole);
 			console.log('Successful data read from Firestore');
 		} else {
 			console.log('No such document!');
 		}
 		currentPageState = PAGE_STATES.details;
-		// data.images =
 	});
 
 	async function handleEditEvent(event) {
@@ -87,11 +84,16 @@
 		} catch (error) {
 			console.error('Error appending eca post data to Firestore:', error);
 		}
-		await uploadImage(ecaPostData, uploadPostImages);
+
+		// Must delete before upload
+		// If user already has 123.png uploaded but chooses to reupload
+		// Uploading first will not work cuz already there, but gets deleted.
+		// Hence, must delete first
 		if (deletePostImages.length !== 0) {
 			// console.log(deletePostImages);
 			await deleteImage(deletePostImages);
 		}
+		await uploadImage(ecaPostData, uploadPostImages);
 		// await updateFirestoreImageReference(data);
 		location.reload();
 		// currentPageState = PAGE_STATES.complete;
@@ -182,58 +184,31 @@
 	/>
 {:else if currentPageState === PAGE_STATES.details}
 	<h4>Event Details</h4>
-	<div class="event-details">
-		<div class="event-details-item">
-			<h6 class="font-weight-bold">Title</h6>
-			<p>{ecaPostData.title}</p>
-		</div>
-		<!-- <div class="d-flex justify-content-between m-0">
-			<div class="">
-				<h6 class="font-weight-bold">Title</h6>
-				<p>{data.title}</p>
-			</div>
-		
-			<span
-				on:click={() => {
-					editMode = true;
-				}}
-			>
-				<Icon class="text-1" name="pencil-fill" />
-				&nbsp; Edit
-			</span>
-		</div> -->
-		<div class="event-detail-item">
-			<h6 class="font-weight-bold">Description</h6>
-			<p>{ecaPostData.description}</p>
-		</div>
-		<div class="event-detail-item">
-			<h6 class="font-weight-bold">Location</h6>
-			<p>{ecaPostData.location}</p>
-		</div>
-		<div class="event-detail-item">
-			<h6>Category</h6>
-			<p>{ecaPostData.selectedCategories.name}</p>
-		</div>
-		<div class="event-detail-item">
-			<h6>Images</h6>
-			<div class="image-preview">
-				{#each ecaPostData.images as image}
-					<img src={image.URL} alt="Event" />
-				{/each}
-			</div>
-		</div>
-		<div class="event-detail-item">
-			<h6>Event Start</h6>
-			<p>{customDateFormat(ecaPostData.startDatetime.toDate())}</p>
-		</div>
-		<div class="event-detail-item">
-			<h6>Event End</h6>
-			<p>{customDateFormat(ecaPostData.endDatetime.toDate())}</p>
-		</div>
-		<!-- <div class="event-detail-item">
-		<button class="btn btn-primary" on:click={handleEditClick}>Edit</button>
-	</div> -->
+	<h6 class="font-weight-bold">Title</h6>
+	<p>{ecaPostData.title}</p>
+	<h6 class="font-weight-bold">Description</h6>
+	<p>{ecaPostData.description}</p>
+	<h6 class="font-weight-bold">Location</h6>
+	<p>{ecaPostData.location}</p>
+	<h6>Category</h6>
+	<div class="mb-3">
+		{#if ecaPostData.selectedCategories.length === 0}
+			<p class="text-muted">None selected</p>
+		{/if}
+		{#each ecaPostData.selectedCategories as category}
+			<Button disabled size="sm" class="me-2 mb-2">{category.name}</Button>
+		{/each}
 	</div>
+	<h6>Images</h6>
+	<div class="image-preview mb-3">
+		{#each ecaPostData.images as image}
+			<img src={image.URL} alt="Event" />
+		{/each}
+	</div>
+	<h6>Event Start</h6>
+	<p>{customDateFormat(ecaPostData.startDatetime.toDate())}</p>
+	<h6>Event End</h6>
+	<p>{customDateFormat(ecaPostData.endDatetime.toDate())}</p>
 	<FormGroup>
 		<Button
 			color="primary"
@@ -249,10 +224,6 @@
 {/if}
 
 <style>
-	.event-detail-item {
-		margin-bottom: 1rem;
-	}
-
 	.image-preview {
 		display: flex;
 		overflow-x: auto;

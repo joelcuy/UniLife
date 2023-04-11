@@ -21,17 +21,29 @@
 	import { page } from '$app/stores';
 	import { createEventDispatcher } from 'svelte';
 
-	export let existingImages = [];
-	let imagesToDelete = [];
+	export let existingImages = []; //Images from cloud
+	let imagesToDelete = []; //Images to delete from cloud
+	let imagesToUpload = []; //Images to upload to cloud
 
-	let imagesToUpload = [];
+	const maxImageCount = 5;
 	let dispatch = createEventDispatcher();
 
 	function handleFileSelection(event) {
 		const newSelectionImages = Array.from(event.target.files);
+		// console.log(newSelectionImages);
 		// Ensure files are not overwritten but appended
 		imagesToUpload = [...imagesToUpload, ...newSelectionImages];
-		imagesToUpload.splice(5, imagesToUpload.length - 5);
+		// console.log(imagesToUpload);
+
+		// Calculate how many more images allowed to upload
+		let numOfNewUploadsAllowed = maxImageCount - existingImages.length
+
+		//Calculate how many images from the file selection to remove
+		let numOfImageSelectedToRemove =imagesToUpload.length + existingImages.length - maxImageCount;
+
+		// Delete the rest of the images after max count
+		imagesToUpload.splice(numOfNewUploadsAllowed, numOfImageSelectedToRemove);
+		// console.log(imagesToUpload);
 	}
 
 	function removeImage(index, isNew) {
@@ -104,20 +116,18 @@
 
 	.image-container {
 		position: relative;
-		display: inline-block;
+		display: flex;
 		margin-right: 0.5rem;
 	}
 
 	.image-preview {
 		display: flex;
 		overflow-x: auto;
-		white-space: nowrap;
 	}
 
 	.image-preview img {
 		max-width: 45vw;
 		max-height: 15vh;
-		/* margin-right: 0.5rem; */
 		cursor: pointer;
 	}
 </style>

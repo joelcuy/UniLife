@@ -3,33 +3,50 @@
 	import { FormGroup, FormText, Button, Form, Label, Alert, Input } from 'sveltestrap';
 	import { db } from '$lib/Firebase';
 	import { onMount } from 'svelte';
-	import { collection, onSnapshot, Timestamp } from 'firebase/firestore';
+	import {
+		collection,
+		getFirestore,
+		doc,
+		setDoc,
+		getDocs,
+		getDoc,
+		query,
+		orderBy
+	} from 'firebase/firestore';
 	import { createEventDispatcher } from 'svelte';
 	import { checkEmptyValues } from '$lib/auth';
 	import CenteredSpinner from '../general/CenteredSpinner.svelte';
 	import { firestoreTimestampToDatetimeLocal } from '../../utils';
+	import EventCategoryModal from '../../../routes/student/profile/edit/EventCategoryModal.svelte';
 
+	// Controls page states
 	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
-
 	let currentPageState = PAGE_STATES.loading;
 
 	export let isEditing = false;
 	export let formData;
 
-	let ecaCategories = [];
-
+	// For alert
 	let isError = false;
 	let errorMessage = '';
+
+	// For Modal
+	let open = false;
+	const toggleAlways = () => {
+		open = true;
+	};
 
 	let title = undefined;
 	let description = undefined;
 	let location = undefined;
-	let selectedCategories = undefined;
+	let selectedCategories = [];
 	let startDatetime = undefined;
 	let endDatetime = undefined;
-	let existingImages = [];
-	let uploadPostImages = [];
-	let deletePostImages = [];
+
+	let existingImages = []; //Images already in cloud
+	let uploadPostImages = []; //Images to post to cloud
+	let deletePostImages = []; //Images to delete from cloud
+
 	let dispatch = createEventDispatcher();
 
 	onMount(async () => {
@@ -38,19 +55,13 @@
 			title = formData.title;
 			description = formData.description;
 			location = formData.location;
-			existingImages = formData.images;
+			selectedCategories = formData.selectedCategories;
 			startDatetime = firestoreTimestampToDatetimeLocal(formData.startDatetime);
 			endDatetime = firestoreTimestampToDatetimeLocal(formData.endDatetime);
+			// Initialize images that were previously uploaded
+			existingImages = formData.images;
 		}
-		onSnapshot(collection(db, 'ecaCategory'), (collectionSnapshot) => {
-			ecaCategories = [];
-			collectionSnapshot.forEach((doc) => {
-				// console.log(doc.id, ' => ', doc.data());
-				ecaCategories.push({ ...doc.data() });
-			});
-			// console.log(ecaCategories);
-			currentPageState = PAGE_STATES.form;
-		});
+		currentPageState = PAGE_STATES.form;
 	});
 
 	function handleClickSave() {
@@ -60,7 +71,6 @@
 			['Description', description],
 			['Location', location],
 			['Event Categories', selectedCategories],
-			// ['Post Image', uploadPostImage],
 			['Start Datetime', startDatetime],
 			['End Datetime', endDatetime]
 		);
@@ -74,10 +84,10 @@
 				description: description,
 				location: location,
 				selectedCategories: selectedCategories,
-				uploadPostImages: uploadPostImages,
-				deletePostImages: deletePostImages,
 				startDatetime: startDatetime,
-				endDatetime: endDatetime
+				endDatetime: endDatetime,
+				uploadPostImages: uploadPostImages,
+				deletePostImages: deletePostImages
 			});
 		}
 	}
@@ -86,25 +96,12 @@
 		dispatch('cancel');
 	}
 
-	function handleSelect(event) {
-		const selectElement = event.target;
-		const selectedOption = selectElement.options[selectElement.selectedIndex];
-		const selectedValue = selectedOption.value;
-		const selectedLabel = selectedOption.textContent;
-		// console.log('Selected value:', selectedValue);
-		// console.log('Selected label:', selectedLabel);
-		selectedCategories = { uid: selectedValue, name: selectedLabel }; // logs the selected value
-	}
-
 	function imageSelect(event) {
-		uploadPostImages = event.detail.imagesToUpload; // logs the selected value
+		uploadPostImages = event.detail.imagesToUpload;
 		deletePostImages = event.detail.imagesToDelete;
+		console.log(uploadPostImages);
 		console.log(deletePostImages);
-		// console.log(postImages);
 	}
-
-	// $: console.log(selectedCategoryId);
-	// $: console.log(formData.selectedCategories.uid);
 </script>
 
 {#if currentPageState === PAGE_STATES.loading}
@@ -146,14 +143,16 @@
 		</FormGroup>
 		<FormGroup>
 			<Label for="category">Category</Label>
-			<Input type="select" name="select" id="category" on:change={handleSelect}>
-				{#each ecaCategories as category}
-					<option value={category.uid}>{category.name}</option>
+			<div class="mb-2">
+				{#if selectedCategories.length === 0}
+					<p class="text-muted">None selected</p>
+				{/if}
+				{#each selectedCategories as category}
+					<!-- <Badge color="secondary">{category.name}</Badge> -->
+					<Button disabled size="sm" class="me-2 mb-2">{category.name}</Button>
 				{/each}
-				<!-- <option>qwer</option>
-				<option selected>qwtwert</option>
-				<option>xcbvxcvb</option> -->
-			</Input>
+			</div>
+			<Button outline block color="primary" on:click={toggleAlways}>Edit</Button>
 			<FormText color="muted">Categories help us improve discoverability of your event</FormText>
 		</FormGroup>
 		<FormGroup>
@@ -192,6 +191,8 @@
 		<!-- </div> -->
 	</Form>
 {/if}
+
+<EventCategoryModal bind:isOpen={open} bind:selectedCategories />
 
 <style>
 </style>

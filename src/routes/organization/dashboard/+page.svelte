@@ -98,7 +98,3 @@
 		</Card>
 	{/each}
 {/if}
-
-<FormGroup>
-	<Button color="primary" id="login-button" block on:click={signout}>SignOut</Button>
-</FormGroup>
