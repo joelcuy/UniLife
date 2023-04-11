@@ -46,23 +46,26 @@
 	<div class="profile-pic">
 		<div class="image" style="background-image:url({blankProfilePic})" />
 	</div>
-	<h3 class:text-muted={!userData.name} class="text-center">
+	<h4 class:text-muted={!userData.name} class="text-center">
 		{userData.name || 'No Name Provided'}
-	</h3>
+	</h4>
 	<br />
-	<h5>Education Institution</h5>
+	<h6>Education Institution</h6>
 	<p class:text-muted={!userData.educationInstitution}>
 		{userData.educationInstitution || 'Not set'}
 	</p>
-	<h5>Course of Study</h5>
+	<h6>Course of Study</h6>
 	<p class:text-muted={!userData.course}>{userData.course || 'Not set'}</p>
-	<h5>Bio</h5>
+	<h6>Bio</h6>
 	<p class:text-muted={!userData.bio}>{userData.bio || 'Not set'}</p>
-	<h5>Event Preferences</h5>
-	<div class="fs-4 mb-3">
+	<h6>Event Preferences</h6>
+	<div class="mb-3">
+		{#if userData.eventPreferences.length === 0}
+			<p class="text-muted">None selected</p>
+		{/if}
 		{#each userData.eventPreferences as category}
 			<!-- <Badge color="secondary">{category.name}</Badge> -->
-			<Button disabled size="sm" class="me-2">{category.name}</Button>
+			<Button disabled size="sm" class="me-2 mb-2">{category.name}</Button>
 		{/each}
 	</div>
 {/if}

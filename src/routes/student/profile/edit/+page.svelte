@@ -124,10 +124,13 @@
 		</FormGroup>
 		<FormGroup>
 			<Label for="category">Event Preferences</Label>
-			<div class="fs-4 mb-3">
+			<div class="mb-2">
+				{#if selectedCategories.length === 0}
+					<p class="text-muted">None selected</p>
+				{/if}
 				{#each selectedCategories as category}
 					<!-- <Badge color="secondary">{category.name}</Badge> -->
-					<Button disabled size="sm" class="me-2">{category.name}</Button>
+					<Button disabled size="sm" class="me-2 mb-2">{category.name}</Button>
 				{/each}
 			</div>
 			<Button outline block color="primary" on:click={toggleAlways}>Edit</Button>
