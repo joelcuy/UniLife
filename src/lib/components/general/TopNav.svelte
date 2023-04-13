@@ -11,27 +11,29 @@
 		Icon
 	} from 'sveltestrap';
 	import { signout } from '$lib/auth.js';
-	import { showBackButton } from '../../stores';
 	import { onMount } from 'svelte';
 	import { ROUTES } from '../../routelist';
 	import { page } from '$app/stores';
 
 	let endOpen = false;
-
 	const toggleEnd = () => (endOpen = !endOpen);
 
 	// const routesWithBackButton = [ROUTES.];
 
+	let showBack = false;
 	function isRouteWithBackButton(url) {
 		const pattern = /^\/student\/feed\/\w+$/;
 		return pattern.test(url);
 	}
-	
+
+	$: {
+		showBack = isRouteWithBackButton($page.url.pathname);
+	}
 </script>
 
 <Navbar color="primary" dark class="fixed-top">
 	<!-- <NavbarToggler class="invisible" /> -->
-	<Nav class={isRouteWithBackButton($page.url.pathname) ? '' : 'invisible'}>
+	<Nav class={showBack ? '' : 'invisible'}>
 		<NavLink
 			class="p-0 text-light"
 			on:click={() => {

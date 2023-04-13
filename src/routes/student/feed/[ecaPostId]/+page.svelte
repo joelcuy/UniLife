@@ -9,9 +9,6 @@
 	import CustomImageCarousel from '$lib/components/student/CustomImageCarousel.svelte';
 	import CenteredSpinner from '../../../../lib/components/general/CenteredSpinner.svelte';
 	import { goto } from '$app/navigation';
-	import { ROUTES } from '../../../../lib/routelist';
-	import { timeAgo } from '../../../../lib/utils';
-	import { showBackButton } from '../../../../lib/stores';
 
 	let ecaPostData;
 	let studentData;
