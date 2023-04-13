@@ -226,7 +226,7 @@
 				{/if}
 				{#each selectedCategories as category}
 					<!-- <Badge color="secondary">{category.name}</Badge> -->
-					<Button disabled size="sm" class="me-2 mb-2">{category.name}</Button>
+					<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
 				{/each}
 			</div>
 			<Button outline block color="primary" on:click={toggleAlways}>Edit</Button>

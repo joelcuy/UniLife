@@ -196,7 +196,7 @@
 			<p class="text-muted">None selected</p>
 		{/if}
 		{#each ecaPostData.selectedCategories as category}
-			<Button disabled size="sm" class="me-2 mb-2">{category.name}</Button>
+			<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
 		{/each}
 	</div>
 	<h6>Images</h6>
