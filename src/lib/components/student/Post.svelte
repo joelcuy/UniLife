@@ -1,5 +1,5 @@
 <script>
-	import CustomImageCarousel from './CustomImageCarousel.svelte';
+	import CustomImageCarousel from '$lib/components/student/CustomImageCarousel.svelte';
 
 	import { onMount } from 'svelte';
 	import {

@@ -1,5 +1,5 @@
 <script>
-	import Post from './Post.svelte';
+	import Post from '$lib/components/student/Post.svelte';
 	import { auth, app, db } from '$lib/Firebase';
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import {
@@ -13,7 +13,7 @@
 		getDoc,
 		onSnapshot
 	} from 'firebase/firestore';
-	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
+	import CenteredSpinner from '$lib/components/general/CenteredSpinner.svelte';
 
 	let isLoading = true;
 	let ecaPosts = [];

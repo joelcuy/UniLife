@@ -6,7 +6,7 @@
 	import { auth, db, storage } from '$lib/Firebase';
 	import { collection, doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 	import { onMount } from 'svelte';
-	import CustomImageCarousel from '../CustomImageCarousel.svelte';
+	import CustomImageCarousel from '$lib/components/student/CustomImageCarousel.svelte';
 	import CenteredSpinner from '../../../../lib/components/general/CenteredSpinner.svelte';
 	import { goto } from '$app/navigation';
 	import { ROUTES } from '../../../../lib/routelist';
