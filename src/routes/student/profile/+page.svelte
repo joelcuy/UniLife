@@ -58,7 +58,6 @@
 			<p class="text-muted">None selected</p>
 		{/if}
 		{#each userData.eventPreferences as category}
-			<!-- <Badge color="secondary">{category.name}</Badge> -->
 			<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
 		{/each}
 	</div>

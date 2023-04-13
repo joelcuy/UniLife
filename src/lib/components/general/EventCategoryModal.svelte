@@ -78,6 +78,5 @@
 	<ModalFooter class="d-flex justify-content-between">
 		<p class="text-muted">Total Categories Selected: {selectedCategories.length}</p>
 		<Button color="primary" on:click={toggle}>Save</Button>
-		<!-- <Button color="secondary" on:click={toggle}>Cancel</Button> -->
 	</ModalFooter>
 </Modal>

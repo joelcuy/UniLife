@@ -2,7 +2,7 @@
 	import { Card, CardBody } from 'sveltestrap';
 </script>
 
-<div class="d-flex flex-column justify-content-center min-vh-100 py-4">
+<div class="bg-color d-flex flex-column justify-content-center min-vh-100 py-4">
 	<div class="text-center mb-3">
 		<h1>UniLife</h1>
 		<h2>The #1 Student App</h2>
@@ -15,8 +15,8 @@
 </div>
 
 <style>
-	/* .header {
-		text-align: center;
-		margin-bottom: 1rem;
-	} */
+	.bg-color {
+		/* background-color: rgba(227, 231, 235); */
+		background: linear-gradient(45deg, var(--bs-primary), var(--bs-secondary) 80%);
+	}
 </style>

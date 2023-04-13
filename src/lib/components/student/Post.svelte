@@ -73,7 +73,7 @@
 		border-radius: 50%;
 		/* overflow: hidden; */
 		padding: 3px;
-		background: linear-gradient(45deg, rgb(255, 230, 0), rgb(255, 0, 128) 80%);
+		background: linear-gradient(45deg, var(--bs-primary), var(--bs-secondary) 80%);
 	}
 
 	.profile-pic img {
@@ -81,7 +81,7 @@
 		height: 100%;
 		object-fit: cover;
 		border-radius: 50%;
-		border: 2px solid #fff;
+		border: 2px solid var(--bs-light);
 	}
 
 	.user {
@@ -95,13 +95,13 @@
 		/* margin: 0; */
 		/* margin-right: 0.5rem; */
 		font-weight: bold;
-		color: black;
+		color: var(--bs-dark);
 		font-size: 0.9rem;
 	}
 
 	.title {
 		font-weight: bold;
-		color: black;
+		color: var(--bs-dark);
 		font-size: 1rem;
 	}
 
@@ -110,7 +110,7 @@
 		left: 0; */
 		width: 100vw;
 		height: auto;
-		background: #fff;
+		background: var(--bs-light);
 		/* border: 1px solid #dfdfdf; */
 		/* margin-top: 40px; */
 	}

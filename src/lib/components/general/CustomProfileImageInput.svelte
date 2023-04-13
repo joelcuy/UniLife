@@ -101,7 +101,8 @@
 		left: 0;
 		right: 0;
 		height: 30%; /* Set the height to 20% to cover the bottom 20% of the profile picture */
-		background-color: rgba(0, 0, 0, 0.5); /* Set the background color to semi-transparent black */
+		background-color: var(--bs-dark);
+		opacity: 0.5; /* Set the background color to semi-transparent black */
 	}
 
 	i {
@@ -111,6 +112,6 @@
 		align-items: center;
 		justify-content: center;
 		text-align: center;
-		color: white;
+		color: var(--bs-light);
 	}
 </style>

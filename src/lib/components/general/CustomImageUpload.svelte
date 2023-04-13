@@ -36,10 +36,10 @@
 		// console.log(imagesToUpload);
 
 		// Calculate how many more images allowed to upload
-		let numOfNewUploadsAllowed = maxImageCount - existingImages.length
+		let numOfNewUploadsAllowed = maxImageCount - existingImages.length;
 
 		//Calculate how many images from the file selection to remove
-		let numOfImageSelectedToRemove =imagesToUpload.length + existingImages.length - maxImageCount;
+		let numOfImageSelectedToRemove = imagesToUpload.length + existingImages.length - maxImageCount;
 
 		// Delete the rest of the images after max count
 		imagesToUpload.splice(numOfNewUploadsAllowed, numOfImageSelectedToRemove);
@@ -107,7 +107,7 @@
 <style>
 	.remove-icon {
 		font-size: 1.5rem;
-		color: white;
+		color: var(--bs-light);
 		position: absolute;
 		top: 0;
 		right: 0.5rem;

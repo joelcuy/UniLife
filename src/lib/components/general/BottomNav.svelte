@@ -19,8 +19,8 @@
 		position: fixed;
 		bottom: 0;
 		width: 100%;
-		box-shadow: 0px 0px 8px rgba(0, 0, 0);
-		background-color: #ffffff;
+		box-shadow: 0px 0px 8px var(--bs-dark);
+		background-color: var(--bs-light);
 		display: flex;
 	}
 
@@ -35,7 +35,7 @@
 		white-space: nowrap;
 		font-family: sans-serif;
 		font-size: 1.5rem;
-		color: black;
+		color: var(--bs-dark);
 		padding: 0.3rem;
 		/* text-decoration: none; */
 		/* -webkit-tap-highlight-color: transparent; */
@@ -43,7 +43,7 @@
 	}
 
 	.nav-link:hover {
-		background-color: #eeeeee;
+		background-color: var(--bs-disabled);
 	}
 
 	.nav-link-active {

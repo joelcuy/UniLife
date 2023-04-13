@@ -79,10 +79,10 @@
 				</Dropdown> -->
 			</CardHeader>
 			<CardBody>
-				<CardText class="m-0 text-secondary"
+				<CardText class="m-0 text-muted"
 					>{customDateFormat(ecaPost.startDatetime.toDate())}</CardText
 				>
-				<CardText class="text-secondary">{ecaPost.location}</CardText>
+				<CardText class="text-muted">{ecaPost.location}</CardText>
 			</CardBody>
 			<CardFooter class="d-flex flex-row justify-content-end">
 				<Button
