@@ -59,3 +59,6 @@
 		<Post {post} />
 	{/each}
 {/if}
+
+<style>
+</style>
