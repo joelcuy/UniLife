@@ -80,6 +80,11 @@
 
 <style>
 	.nav-compensation {
-		padding: 4.5rem 1rem;
+		padding: 1rem 1rem;
+		margin-top: 56px;
+		height: calc(100vh - 56px - 46px);
+		/* Compensate for top and bottom nav */
+		/* max-height: calc(100vh - 56px - 46px); */
+		overflow-y: auto;
 	}
 </style>

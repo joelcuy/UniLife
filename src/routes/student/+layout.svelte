@@ -42,7 +42,7 @@
 
 	const navigationOptions = [
 		{ path: ROUTES.feed, icon: 'house-door-fill', label: 'Home' },
-		{ path: ROUTES.discover, icon: 'search', label: 'Discover' },
+		{ path: ROUTES.discover, icon: 'compass-fill', label: 'Discover' },
 		{ path: ROUTES.profile, icon: 'person-fill', label: 'Profile' }
 	];
 
@@ -93,6 +93,10 @@
 
 <style>
 	.nav-compensation {
-		padding: 56px 1rem;
+		margin-top: 56px;
+		height: calc(100vh - 56px - 46px);
+		/* Compensate for top and bottom nav */
+		/* max-height: calc(100vh - 56px - 46px); */
+		overflow-y: auto;
 	}
 </style>
