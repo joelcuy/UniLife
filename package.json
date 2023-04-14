@@ -26,7 +26,6 @@
 		"@sveltejs/adapter-vercel": "^2.4.1",
 		"bootstrap": "^5.2.3",
 		"firebase": "^9.17.2",
-		"svelte-inview": "^4.0.0",
 		"sveltestrap": "^5.10.0"
 	}
 }

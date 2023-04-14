@@ -110,6 +110,7 @@
 		left: 0; */
 		width: 100vw;
 		height: auto;
+		padding-bottom: 1rem;
 		background: var(--bs-light);
 		/* border: 1px solid #dfdfdf; */
 		/* margin-top: 40px; */

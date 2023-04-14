@@ -21,15 +21,16 @@
 	let lastVisible = null;
 	const loadCount = 3;
 
+	let debounceTimeout;
+	let noMoreEvents = false;
+
+	let scrollContainer;
+
 	onMount(async () => {
 		loadMoreEvents();
 	});
 
 	async function loadMoreEvents() {
-		console.log('function triggered');
-		if (isLoading) return;
-		isLoading = true;
-
 		// Firestore
 		const ecaPostRef = collection(db, 'ecaPosts');
 		let ecaPostQuery = query(ecaPostRef, orderBy('creationDate', 'desc'), limit(loadCount)); // Replace 'createdAt' with the field you want to order by
@@ -62,26 +63,50 @@
 			ecaPosts = [...ecaPosts, ...newEcaPosts];
 			lastVisible = ecaPostSnapshot.docs[ecaPostSnapshot.docs.length - 1];
 		}
-		isLoading = false;
+
+		return newEcaPosts.length;
 	}
 
-	function onScroll(e) {
+	async function onScroll(e) {
 		const { scrollTop, clientHeight, scrollHeight } = e.target;
-		if (scrollTop + clientHeight >= scrollHeight - 10) {
-			loadMoreEvents();
+
+		if (scrollTop + clientHeight >= scrollHeight && !isLoading && !noMoreEvents) {
+			// Clear the existing debounce timeout
+			clearTimeout(debounceTimeout);
+
+			// Set a new debounce timeout
+			debounceTimeout = setTimeout(async () => {
+				isLoading = true;
+				const eventsLoaded = await loadMoreEvents();
+				isLoading = false;
+				scrollContainer.scrollTop = scrollHeight - clientHeight - 25;
+
+				if (eventsLoaded === 0) {
+					noMoreEvents = true;
+				}
+			}, 500);
 		}
 	}
+
+	$: console.log(isLoading);
 </script>
 
-<div class="scroll-container" on:scroll={onScroll} style="height: 100%; overflow-y: auto;">
+<div
+	class="scroll-container"
+	bind:this={scrollContainer}
+	on:scroll={onScroll}
+	style="height: 100%; overflow-y: auto;"
+>
 	{#each ecaPosts as post}
 		<Post {post} />
 	{/each}
 
 	{#if isLoading}
-		<CenteredSpinner />
-	{:else}
-		<p class="text-center text-muted">No more posts</p>
+		<CenteredSpinner isFullHeight={false} />
+	{/if}
+
+	{#if noMoreEvents}
+		<p class="text-muted text-center">No more events for now....</p>
 	{/if}
 </div>
 
