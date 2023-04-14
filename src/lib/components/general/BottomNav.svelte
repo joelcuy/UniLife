@@ -43,7 +43,7 @@
 	}
 
 	.nav-link:hover {
-		background-color: var(--bs-disabled);
+		/* background-color: var(--bs-disabled); */
 	}
 
 	.nav-link-active {
