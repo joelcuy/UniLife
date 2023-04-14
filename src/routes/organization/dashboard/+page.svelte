@@ -20,7 +20,16 @@
 		DropdownToggle
 	} from 'sveltestrap';
 	import { auth, db, storage } from '$lib/Firebase';
-	import { collection, doc, addDoc, getDocs, onSnapshot, where, query } from 'firebase/firestore';
+	import {
+		collection,
+		doc,
+		addDoc,
+		getDocs,
+		onSnapshot,
+		where,
+		query,
+		orderBy
+	} from 'firebase/firestore';
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { onMount } from 'svelte';
 	import { ROUTES } from '../../../lib/routelist';
@@ -43,7 +52,11 @@
 		});
 		userUID = user.uid;
 
-		const q = query(collection(db, 'ecaPosts'), where('orgUidFk', '==', userUID));
+		const q = query(
+			collection(db, 'ecaPosts'),
+			where('orgUidFk', '==', userUID),
+			orderBy('creationDate', 'desc')
+		);
 
 		const querySnapshot = await getDocs(q);
 		ecaPosts = [];
