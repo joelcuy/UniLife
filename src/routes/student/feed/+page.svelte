@@ -1,6 +1,6 @@
 <script>
 	import Post from '$lib/components/student/Post.svelte';
-	import { db } from '$lib/Firebase';
+	import { db, auth } from '$lib/Firebase';
 	import { onMount, onDestroy } from 'svelte';
 	import {
 		collection,
@@ -10,9 +10,11 @@
 		query,
 		orderBy,
 		limit,
-		startAfter
+		startAfter,
+		where
 	} from 'firebase/firestore';
 	import CenteredSpinner from '$lib/components/general/CenteredSpinner.svelte';
+	import { onAuthStateChanged } from 'firebase/auth';
 
 	let isLoading = false;
 	let ecaPosts = [];
@@ -26,20 +28,45 @@
 
 	let scrollContainer;
 
+	let studentEventPreference;
+
 	onMount(async () => {
-		loadMoreEvents();
+		isLoading = true;
+
+		studentEventPreference = await getStudentEventPreference();
+		const eventsLoaded = await loadMoreEvents();
+		isLoading = false;
+
+		if (eventsLoaded === 0) {
+			noMoreEvents = true;
+		}
 	});
+
+	async function getStudentEventPreference() {
+		return new Promise((resolve, reject) => {
+			onAuthStateChanged(auth, async (user) => {
+				const studentRef = doc(db, 'users', user.uid);
+				const studentDoc = await getDoc(studentRef);
+				resolve(studentDoc.data().eventPreferences.map((preference) => preference.uid));
+			});
+		});
+	}
 
 	async function loadMoreEvents() {
 		// Firestore
 		const ecaPostRef = collection(db, 'ecaPosts');
-		let ecaPostQuery = query(ecaPostRef, orderBy('creationDate', 'desc'), limit(loadCount)); // Replace 'createdAt' with the field you want to order by
-		// const ecaPostSnapshot = await getDocs(ecaPostRef);
+		let ecaPostQuery = query(
+			ecaPostRef,
+			orderBy('creationDate', 'desc'),
+			where('selectedCategoriesUid', 'array-contains-any', studentEventPreference),
+			limit(loadCount)
+		);
 
 		if (lastVisible) {
 			ecaPostQuery = query(
 				ecaPostRef,
 				orderBy('creationDate', 'desc'),
+				where('selectedCategoriesUid', 'array-contains-any', studentEventPreference),
 				startAfter(lastVisible),
 				limit(loadCount)
 			);
@@ -63,7 +90,7 @@
 			ecaPosts = [...ecaPosts, ...newEcaPosts];
 			lastVisible = ecaPostSnapshot.docs[ecaPostSnapshot.docs.length - 1];
 		}
-
+		console.log(newEcaPosts.length);
 		return newEcaPosts.length;
 	}
 
@@ -81,6 +108,7 @@
 				isLoading = false;
 				scrollContainer.scrollTop = scrollHeight - clientHeight - 25;
 
+				console.log(eventsLoaded);
 				if (eventsLoaded === 0) {
 					noMoreEvents = true;
 				}

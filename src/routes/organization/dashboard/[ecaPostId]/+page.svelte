@@ -74,6 +74,7 @@
 					description: description,
 					location: eventLocation,
 					selectedCategories: selectedCategories,
+					selectedCategoriesUid: selectedCategories.map((category) => category.uid),
 					startDatetime: Timestamp.fromDate(new Date(`${startDatetime}:00.000Z`)),
 					endDatetime: Timestamp.fromDate(new Date(`${endDatetime}:00.000Z`)),
 					lastModified: Timestamp.fromDate(new Date())
