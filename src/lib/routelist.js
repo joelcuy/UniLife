@@ -10,7 +10,6 @@ export const ROUTES = Object.freeze({
 
 	//Organization
 	orgDashboard: '/organization/dashboard',
-	// orgEventDetail: '/organization/dashboard/detail',
 	orgCreateEvent: '/organization/create-event',
 	orgProfile: '/organization/profile',
 	orgEditProfile: '/organization/profile/edit',
@@ -22,7 +21,8 @@ export const ROUTES = Object.freeze({
 	editProfile: '/student/profile/edit',
 
 	//Admin
-	adminDashboard: '/admin'
+	adminDashboard: '/admin/dashboard',
+	adminManageOrg: '/admin/manage-org',
 });
 
 export const publicRoutes = [
