@@ -10,20 +10,16 @@
 		CardSubtitle,
 		CardText,
 		CardTitle,
-		Nav,
-		NavLink,
-		Icon,
-		FormGroup,
-		Dropdown,
-		DropdownItem,
-		DropdownMenu,
-		DropdownToggle
+		Modal,
+		ModalBody,
+		ModalFooter,
+		ModalHeader
 	} from 'sveltestrap';
 	import { auth, db, storage } from '$lib/Firebase';
 	import {
 		collection,
 		doc,
-		addDoc,
+		deleteDoc,
 		getDocs,
 		onSnapshot,
 		where,
@@ -36,10 +32,24 @@
 	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
 	import { goto } from '$app/navigation';
 
-	let isLoading = true;
+	let isOpen = false;
+	// For Modal
+	const toggle = () => {
+		// fullscreen = undefined;
+		isOpen = !isOpen;
+	};
+
+	let selectedEcaPost;
+
+	let isLoading;
 	let ecaPosts = [];
 
 	onMount(async () => {
+		await fetchData();
+	});
+
+	async function fetchData() {
+		isLoading = true;
 		let userUID;
 		const user = await new Promise((resolve, reject) => {
 			onAuthStateChanged(auth, (user) => {
@@ -66,11 +76,13 @@
 			ecaPosts.push({ ...doc.data(), uid: doc.id });
 		});
 		isLoading = false;
-	});
+	}
 
-	// function handleDropdownToggleClick(event) {
-	// 	event.preventDefault();
-	// }
+	async function deleteEcaPost({ uid }) {
+		console.log(uid);
+		await deleteDoc(doc(db, 'ecaPosts', uid));
+		await fetchData();
+	}
 </script>
 
 <h4>Your Events</h4>
@@ -81,20 +93,11 @@
 		<Card class="mb-2">
 			<CardHeader class="d-flex flex-row justify-content-between">
 				<CardTitle class="my-2 fs-6">{ecaPost.title}</CardTitle>
-				<!-- <Dropdown>
-					<DropdownToggle color="none" class="px-0">
-						<Icon name="three-dots-vertical" />
-					</DropdownToggle>
-					<DropdownMenu end>
-						<DropdownItem href={`${ROUTES.orgDashboard}/${ecaPost.uid}`}>View Details</DropdownItem>
-						<DropdownItem class="text-danger">Delete</DropdownItem>
-					</DropdownMenu>
-				</Dropdown> -->
 			</CardHeader>
 			<CardBody>
-				<CardText class="m-0 text-muted"
-					>{customDateFormat(ecaPost.startDatetime.toDate())}</CardText
-				>
+				<CardText class="m-0 text-muted">
+					{customDateFormat(ecaPost.startDatetime.toDate())}
+				</CardText>
 				<CardText class="text-muted">{ecaPost.location}</CardText>
 			</CardBody>
 			<CardFooter class="d-flex flex-row justify-content-end">
@@ -104,10 +107,41 @@
 					outline
 					on:click={() => {
 						goto(`${ROUTES.orgDashboard}/${ecaPost.uid}`);
-					}}>Edit</Button
+					}}
 				>
-				<Button color="primary">Delete</Button>
+					Edit
+				</Button>
+				<Button
+					color="primary"
+					on:click={() => {
+						toggle();
+						selectedEcaPost = ecaPost;
+					}}
+				>
+					Delete
+				</Button>
 			</CardFooter>
 		</Card>
 	{/each}
+	{#if ecaPosts.length === 0}
+		<p class="text-center text-muted">No events yet</p>
+	{/if}
 {/if}
+
+<Modal {isOpen} {toggle} size="sm" class="mt-5">
+	<ModalHeader {toggle}>Confirmation</ModalHeader>
+	<ModalBody>
+		<p>Delete Event?</p>
+	</ModalBody>
+	<ModalFooter class="d-flex justify-content-end">
+		<Button
+			color="primary"
+			on:click={() => {
+				deleteEcaPost(selectedEcaPost);
+				toggle();
+			}}
+		>
+			Confirm
+		</Button>
+	</ModalFooter>
+</Modal>
