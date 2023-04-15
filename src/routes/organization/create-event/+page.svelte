@@ -5,6 +5,7 @@
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 	import CenteredSpinner from '../../../lib/components/general/CenteredSpinner.svelte';
+	import { Button, Icon } from 'sveltestrap';
 
 	const PAGE_STATES = Object.freeze({ form: 1, loading: 2, complete: 3 });
 
@@ -100,7 +101,20 @@
 	<h4>Create New Event</h4>
 	<EventForm on:save={handleCreateEvent} />
 {:else if currentPageState === PAGE_STATES.complete}
-	doneeeeeeeee
+	<Icon
+		name="check-circle-fill"
+		class="text-success text-center d-block"
+		style="font-size: 128px;"
+	/>
+	<h5 class="text-center mb-4">Event Successfully created</h5>
+	<div class="text-center">
+		<Button
+			color="primary"
+			on:click={() => {
+				currentPageState = PAGE_STATES.form;
+			}}>Create Another Event</Button
+		>
+	</div>
 {/if}
 
 <style>

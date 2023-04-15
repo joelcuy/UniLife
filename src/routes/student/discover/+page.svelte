@@ -92,7 +92,7 @@
 	<CenteredSpinner />
 {:else}
 	<TabContent class="nav-fill">
-		<TabPane tabId="registered">
+		<TabPane tabId="registered" active>
 			<span slot="tab">
 				<Icon name="calendar-check" /> Registered
 			</span>
@@ -114,8 +114,11 @@
 					</CardBody>
 				</Card>
 			{/each}
+			{#if registeredEvents.length === 0}
+				<p>No Events to Display</p>
+			{/if}
 		</TabPane>
-		<TabPane tabId="search" active>
+		<TabPane tabId="search">
 			<span slot="tab">
 				<Icon name="search" /> Search
 			</span>
@@ -147,6 +150,9 @@
 						</CardBody>
 					</Card>
 				{/each}
+				{#if eventSearchResults.length === 0}
+					<p>No Events to Display</p>
+				{/if}
 			</div>
 		</TabPane>
 	</TabContent>
