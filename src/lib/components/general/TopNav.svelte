@@ -52,7 +52,7 @@
 			>
 		</ListGroup>
 	</Offcanvas>
-	<NavbarBrand>UniLife</NavbarBrand>
+	<NavbarBrand class="fw-bolder">UniLife</NavbarBrand>
 	<NavbarToggler on:click={toggleEnd} />
 </Navbar>
 
