@@ -43,9 +43,9 @@
 	</Nav>
 	<Offcanvas isOpen={endOpen} style="width: 70vw" toggle={toggleEnd} placement="end" header="Menu">
 		<ListGroup flush>
-			<ListGroupItem class="px-0" tag="button" action on:click={() => {}}
+			<!-- <ListGroupItem class="px-0" tag="button" action on:click={() => {}}
 				><Icon name="exclamation-triangle-fill " class="me-3" />Report an Issue</ListGroupItem
-			>
+			> -->
 			<ListGroupItem class="px-0" tag="button" action on:click={signout}
 				><Icon name="box-arrow-right" class="me-3" /><span class="text-danger">Sign Out</span
 				></ListGroupItem
