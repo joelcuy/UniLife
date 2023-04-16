@@ -109,7 +109,7 @@
 						goto(`${ROUTES.orgDashboard}/${ecaPost.uid}`);
 					}}
 				>
-					Edit
+					View Details
 				</Button>
 				<Button
 					color="primary"

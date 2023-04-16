@@ -1,10 +1,23 @@
 <script>
 	import EventForm from '$lib/components/organization/EventForm.svelte';
-	import { Button, Icon, FormGroup } from 'sveltestrap';
+	import {
+		Button,
+		Icon,
+		FormGroup,
+		TabContent,
+		TabPane,
+		CardBody,
+		Card,
+		CardHeader,
+		CardText,
+		CardTitle,
+		Nav,
+		NavLink
+	} from 'sveltestrap';
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { customDateFormat } from '$lib/utils.js';
 	import { auth, db, storage } from '$lib/Firebase';
-	import { collection, doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
+	import { collection, doc, getDoc, getDocs, setDoc, Timestamp } from 'firebase/firestore';
 	import {
 		ref,
 		uploadBytesResumable,
@@ -14,6 +27,7 @@
 	} from 'firebase/storage';
 	import CenteredSpinner from '$lib/components/general/CenteredSpinner.svelte';
 	import { onMount } from 'svelte';
+	import { ROUTES } from '../../../../lib/routelist';
 
 	let ecaPostData;
 
@@ -22,6 +36,7 @@
 	let currentPageState = PAGE_STATES.loading;
 
 	// let editMode = false;
+	let attendees = [];
 
 	onMount(async () => {
 		const path = window.location.pathname;
@@ -40,6 +55,17 @@
 		} else {
 			console.log('No such document!');
 		}
+
+		const attendeesRef = collection(postRef, 'attendees');
+
+		// Query the attendees subcollection
+		const attendeesSnapshot = await getDocs(attendeesRef);
+
+		// Iterate through the query results and retrieve event data
+		attendeesSnapshot.forEach((doc) => {
+			const attendeesData = doc.data();
+			attendees.push(attendeesData);
+		});
 		currentPageState = PAGE_STATES.details;
 	});
 
@@ -171,58 +197,89 @@
 	}
 </script>
 
-{#if currentPageState === PAGE_STATES.loading}
-	<CenteredSpinner />
-{:else if currentPageState === PAGE_STATES.editForm}
-	<h4>Edit Event Details</h4>
-	<EventForm
-		formData={ecaPostData}
-		isEditing="true"
-		on:cancel={() => {
-			currentPageState = PAGE_STATES.details;
-		}}
-		on:save={handleEditEvent}
-	/>
-{:else if currentPageState === PAGE_STATES.details}
-	<h4>Event Details</h4>
-	<h6 class="font-weight-bold">Title</h6>
-	<p>{ecaPostData.title}</p>
-	<h6 class="font-weight-bold">Description</h6>
-	<p>{ecaPostData.description}</p>
-	<h6 class="font-weight-bold">Location</h6>
-	<p>{ecaPostData.location}</p>
-	<h6>Category</h6>
-	<div class="mb-3">
-		{#if ecaPostData.selectedCategories.length === 0}
-			<p class="text-muted">None selected</p>
+<TabContent class="nav-fill">
+	<TabPane tabId="search" active>
+		<span slot="tab">
+			<Icon name="info-circle" /> Event Details
+		</span>
+		<div class="mb-2"/>
+		{#if currentPageState === PAGE_STATES.loading}
+			<CenteredSpinner />
+		{:else if currentPageState === PAGE_STATES.editForm}
+			<EventForm
+				formData={ecaPostData}
+				isEditing="true"
+				on:cancel={() => {
+					currentPageState = PAGE_STATES.details;
+				}}
+				on:save={handleEditEvent}
+			/>
+		{:else if currentPageState === PAGE_STATES.details}
+			<h6 class="font-weight-bold">Title</h6>
+			<p>{ecaPostData.title}</p>
+			<h6 class="font-weight-bold">Description</h6>
+			<p>{ecaPostData.description}</p>
+			<h6 class="font-weight-bold">Location</h6>
+			<p>{ecaPostData.location}</p>
+			<h6>Category</h6>
+			<div class="mb-2">
+				{#if ecaPostData.selectedCategories.length === 0}
+					<p class="text-muted">None selected</p>
+				{/if}
+				{#each ecaPostData.selectedCategories as category}
+					<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
+				{/each}
+			</div>
+			<h6>Images</h6>
+			<div class="image-preview mb-3">
+				{#each ecaPostData.images as image}
+					<img src={image.URL} alt="Event" />
+				{/each}
+			</div>
+			<h6>Event Start</h6>
+			<p>{customDateFormat(ecaPostData.startDatetime.toDate())}</p>
+			<h6>Event End</h6>
+			<p>{customDateFormat(ecaPostData.endDatetime.toDate())}</p>
+			<FormGroup>
+				<Button
+					color="primary"
+					id="login-button"
+					block
+					on:click={() => {
+						currentPageState = PAGE_STATES.editForm;
+					}}
+					>Edit &nbsp;
+					<Icon name="pencil-fill" />
+				</Button>
+			</FormGroup>
 		{/if}
-		{#each ecaPostData.selectedCategories as category}
-			<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
-		{/each}
-	</div>
-	<h6>Images</h6>
-	<div class="image-preview mb-3">
-		{#each ecaPostData.images as image}
-			<img src={image.URL} alt="Event" />
-		{/each}
-	</div>
-	<h6>Event Start</h6>
-	<p>{customDateFormat(ecaPostData.startDatetime.toDate())}</p>
-	<h6>Event End</h6>
-	<p>{customDateFormat(ecaPostData.endDatetime.toDate())}</p>
-	<FormGroup>
-		<Button
-			color="primary"
-			id="login-button"
-			block
-			on:click={() => {
-				currentPageState = PAGE_STATES.editForm;
-			}}
-			>Edit &nbsp;
-			<Icon name="pencil-fill" />
-		</Button>
-	</FormGroup>
-{/if}
+	</TabPane>
+	<TabPane tabId="registered">
+		<span slot="tab">
+			<Icon name="group" /> Attendees
+		</span>
+		{#if currentPageState === PAGE_STATES.loading}
+			<CenteredSpinner />
+		{:else}
+			{#each attendees as attendee}
+				<Card class="my-2">
+					<CardHeader class="d-flex flex-row justify-content-between">
+						<CardTitle class="my-2 fs-6">{attendee.name}</CardTitle>
+					</CardHeader>
+					<CardBody>
+						<CardText class="m-0 text-muted"
+							>{customDateFormat(attendee.registrationDate.toDate())}</CardText
+						>
+						<CardText class="text-muted">{attendee.email}</CardText>
+					</CardBody>
+				</Card>
+			{/each}
+			{#if attendees.length === 0}
+				<p class="text-muted text-center mt-3">No Attendees Yet</p>
+			{/if}
+		{/if}
+	</TabPane>
+</TabContent>
 
 <style>
 	.image-preview {

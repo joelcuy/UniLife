@@ -88,52 +88,17 @@
 	$: searchEvents(searchTerm);
 </script>
 
-{#if currentPageState === PAGE_STATES.loading}
-	<CenteredSpinner />
-{:else}
-	<TabContent class="nav-fill">
-		<TabPane tabId="registered" active>
-			<span slot="tab">
-				<Icon name="calendar-check" /> Registered
-			</span>
-			{#each registeredEvents as event}
-				<Card class="my-2 mx-2">
-					<CardHeader class="d-flex flex-row justify-content-between">
-						<CardTitle class="my-2 fs-6">{event.title}</CardTitle>
-						<Nav>
-							<NavLink href={`${ROUTES.feed}/${event.ecaPostUidFk}`} class="px-0"
-								>View Details</NavLink
-							>
-						</Nav>
-					</CardHeader>
-					<CardBody>
-						<CardText class="m-0 text-muted"
-							>{customDateFormat(event.startDatetime.toDate())}</CardText
-						>
-						<CardText class="text-muted">{event.location}</CardText>
-					</CardBody>
-				</Card>
-			{/each}
-			{#if registeredEvents.length === 0}
-				<p>No Events to Display</p>
-			{/if}
-		</TabPane>
-		<TabPane tabId="search">
-			<span slot="tab">
-				<Icon name="search" /> Search
-			</span>
-			<FormGroup class="mt-2 mx-2">
-				<Input
-					type="text"
-					name="search"
-					id="search"
-					placeholder="Search for events..."
-					bind:value={searchTerm}
-				/>
-			</FormGroup>
-			<div class="search-results">
-				{#each eventSearchResults as event}
-					<Card class="my-2 mx-2">
+<div class="px-3 pt-3">
+	{#if currentPageState === PAGE_STATES.loading}
+		<CenteredSpinner />
+	{:else}
+		<TabContent class="nav-fill">
+			<TabPane tabId="registered" active>
+				<span slot="tab">
+					<Icon name="calendar-check" /> Registered
+				</span>
+				{#each registeredEvents as event}
+					<Card class="my-2">
 						<CardHeader class="d-flex flex-row justify-content-between">
 							<CardTitle class="my-2 fs-6">{event.title}</CardTitle>
 							<Nav>
@@ -150,10 +115,47 @@
 						</CardBody>
 					</Card>
 				{/each}
-				{#if eventSearchResults.length === 0}
-					<p>No Events to Display</p>
+				{#if registeredEvents.length === 0}
+					<p class="text-muted text-center mt-3">No Events to Display</p>
 				{/if}
-			</div>
-		</TabPane>
-	</TabContent>
-{/if}
+			</TabPane>
+			<TabPane tabId="search">
+				<span slot="tab">
+					<Icon name="search" /> Search
+				</span>
+				<FormGroup class="mt-2">
+					<Input
+						type="text"
+						name="search"
+						id="search"
+						placeholder="Search for events..."
+						bind:value={searchTerm}
+					/>
+				</FormGroup>
+				<div class="search-results">
+					{#each eventSearchResults as event}
+						<Card class="my-2 mx-2">
+							<CardHeader class="d-flex flex-row justify-content-between">
+								<CardTitle class="my-2 fs-6">{event.title}</CardTitle>
+								<Nav>
+									<NavLink href={`${ROUTES.feed}/${event.ecaPostUidFk}`} class="px-0"
+										>View Details</NavLink
+									>
+								</Nav>
+							</CardHeader>
+							<CardBody>
+								<CardText class="m-0 text-muted"
+									>{customDateFormat(event.startDatetime.toDate())}</CardText
+								>
+								<CardText class="text-muted">{event.location}</CardText>
+							</CardBody>
+						</Card>
+					{/each}
+					{#if eventSearchResults.length === 0}
+						<p class="text-muted text-center">No Events to Display</p>
+					{/if}
+				</div>
+			</TabPane>
+		</TabContent>
+	{/if}
+</div>
