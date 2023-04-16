@@ -80,3 +80,12 @@ export function timeAgo(datetime) {
 	if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
 	return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
 }
+
+export function getFriendlyErrorMessage(errorCode) {
+	const errorMessages = {
+	  'auth/invalid-email': 'The email address is not valid. Please enter a valid email address.',
+	  // Add more error messages as needed
+	};
+  
+	return errorMessages[errorCode] || 'An unknown error occurred. Please try again.';
+  }
