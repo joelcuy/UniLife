@@ -11,7 +11,7 @@
 
 	//Cooldown for requesting TAC
 	let isCooldown = false;
-	const COOLDOWN_TIME = 10;
+	const COOLDOWN_TIME = 30;
 	/**
 	 * TODO change time depending on requirements
 	 */
