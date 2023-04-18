@@ -77,8 +77,10 @@
 
 			console.log(filteredDocs);
 
-			eventSearchResults = filteredDocs.map((doc) => doc.data());
-
+			eventSearchResults = filteredDocs.map((doc) => {
+				return { ...doc.data(), ecaPostUidFk: doc.id };
+			});
+			console.log(eventSearchResults);
 			// ... proceed with the rest of your logic, using filteredDocs instead of ecaPostSnapshot.docs
 		} else {
 			eventSearchResults = [];
