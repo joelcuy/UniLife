@@ -1,6 +1,6 @@
 <script>
 	import CustomImageCarousel from '$lib/components/student/CustomImageCarousel.svelte';
-
+	import blankProfilePic from '$lib/assets/blankProfilePic.png';
 	import { onMount } from 'svelte';
 	import {
 		Carousel,
@@ -21,7 +21,10 @@
 	<div class="info">
 		<div class="user">
 			<div class="profile-pic">
-				<img src={post.organizer.profilePic.URL} alt="{post.organizer.orgName}'s avatar" />
+				<img
+					src={post.organizer.profilePic ? post.organizer.profilePic.URL : blankProfilePic}
+					alt="{post.organizer.orgName}'s avatar"
+				/>
 			</div>
 			<p class="username">{post.organizer.orgName}</p>
 		</div>

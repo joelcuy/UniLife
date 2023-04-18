@@ -47,12 +47,22 @@
 			onAuthStateChanged(auth, async (user) => {
 				const studentRef = doc(db, 'users', user.uid);
 				const studentDoc = await getDoc(studentRef);
-				resolve(studentDoc.data().eventPreferences.map((preference) => preference.uid));
+				const eventPreferences = studentDoc.data().eventPreferences;
+				if (eventPreferences) {
+					resolve(eventPreferences.map((preference) => preference.uid));
+				} else {
+					// Return empty array if no preferences selected
+					resolve([]);
+				}
 			});
 		});
 	}
 
 	async function loadMoreEvents() {
+		if (studentEventPreference.length === 0) {
+			noMoreEvents = true;
+			return;
+		}
 		// Firestore
 		const ecaPostRef = collection(db, 'ecaPosts');
 		let ecaPostQuery = query(
@@ -116,7 +126,7 @@
 		}
 	}
 
-	$: console.log(isLoading);
+	$: console.log(ecaPosts);
 </script>
 
 <div

@@ -53,14 +53,18 @@
 	<h6>Bio</h6>
 	<p class:text-muted={!userData.bio}>{userData.bio || 'Not set'}</p>
 	<h6>Event Preferences</h6>
-	<div class="mb-3">
-		{#if userData.eventPreferences.length === 0}
-			<p class="text-muted">None selected</p>
-		{/if}
-		{#each userData.eventPreferences as category}
-			<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
-		{/each}
-	</div>
+	{#if userData.eventPreferences}
+		<div class="mb-3">
+			{#if userData.eventPreferences.length === 0}
+				<p class="text-muted">None selected</p>
+			{/if}
+			{#each userData.eventPreferences as category}
+				<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
+			{/each}
+		</div>
+	{:else}
+		<p class="text-muted">None selected</p>
+	{/if}
 {/if}
 
 <FormGroup>
