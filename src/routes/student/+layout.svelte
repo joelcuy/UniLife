@@ -27,11 +27,8 @@
 	import { signout } from '$lib/auth.js';
 
 	let userRole;
-	let isOpen = false;
-	// const toggle = () => (isOpen = !isOpen);
-	let endOpen = false;
+	let userEmail;
 
-	const toggleEnd = () => (endOpen = !endOpen);
 	const PAGE_STATES = Object.freeze({
 		loading: 1,
 		unauthorized: 2,
@@ -50,6 +47,7 @@
 		onAuthStateChanged(auth, async (user) => {
 			// TODO Can we put currentPageState = PAGE_STATES.loading; here?
 			if (user) {
+				userEmail = user.email;
 				try {
 					const userDocSnap = await getDoc(doc(db, 'users', user.uid));
 
@@ -82,7 +80,7 @@
 	<h1>Error 403: Access Denied</h1>
 	<p>You don't have permission to access this page.</p>
 {:else if currentPageState === PAGE_STATES.verifyEmail}
-	<EmailVerification />
+	<EmailVerification {userEmail} />
 {:else if currentPageState === PAGE_STATES.accessible}
 	<TopNav />
 	<div class="nav-compensation">

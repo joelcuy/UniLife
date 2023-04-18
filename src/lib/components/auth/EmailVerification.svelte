@@ -8,6 +8,7 @@
 	import { ROUTES } from '$lib/routelist';
 
 	let showAlert = false;
+	export let userEmail;
 
 	//Cooldown for requesting TAC
 	let isCooldown = false;
@@ -67,7 +68,7 @@
 				<h1>Verify E-mail Address</h1>
 				<br />
 				<p>
-					Please check your email and click on the verification link to continue. Click
+					Please check your inbox at {userEmail} and click on the verification link to continue. Click
 					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a
 						href="javascript:void(0)"

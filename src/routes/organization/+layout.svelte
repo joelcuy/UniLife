@@ -12,6 +12,8 @@
 	import CenteredSpinner from '../../lib/components/general/CenteredSpinner.svelte';
 	import TopNav from '../../lib/components/general/TopNav.svelte';
 
+	let userEmail;
+	
 	const PAGE_STATES = Object.freeze({
 		loading: 1,
 		unauthorized: 2,
@@ -33,6 +35,7 @@
 	onMount(() => {
 		onAuthStateChanged(auth, async (user) => {
 			if (user) {
+				userEmail = user.email;
 				try {
 					const userDocSnap = await getDoc(doc(db, 'users', user.uid));
 
