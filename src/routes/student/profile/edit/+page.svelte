@@ -71,7 +71,11 @@
 					course = userData.course;
 					bio = userData.bio;
 					profilePic = userData.profilePic;
-					selectedCategories = userData.eventPreferences;
+					if (userData.eventPreferences) {
+						selectedCategories = userData.eventPreferences;
+					} else {
+						selectedCategories = [];
+					}
 
 					// Write to Svelte store for overall app use
 					// currentUserData.set({ ...userData, uid: userUID });

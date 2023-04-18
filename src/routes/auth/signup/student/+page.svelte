@@ -27,7 +27,8 @@
 				const userRef = doc(db, 'users', userCredential.user.uid);
 				await setDoc(userRef, {
 					role: 'student',
-					email: email
+					email: email,
+					eventPreferences: [],
 				});
 				console.log('Student data appended to Firestore');
 				await sendEmailVerification(userCredential.user);
