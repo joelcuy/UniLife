@@ -220,14 +220,18 @@
 		</FormGroup>
 		<FormGroup>
 			<Label for="category">Event Preferences</Label>
-			<div class="mb-2">
-				{#if selectedCategories.length === 0}
-					<p class="text-muted">None selected</p>
-				{/if}
-				{#each selectedCategories as category}
-					<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
-				{/each}
-			</div>
+			{#if selectedCategories}
+				<div class="mb-2">
+					{#if selectedCategories.length === 0}
+						<p class="text-muted">None selected</p>
+					{/if}
+					{#each selectedCategories as category}
+						<Button color="primary" disabled size="sm" class="me-2 mb-2">{category.name}</Button>
+					{/each}
+				</div>
+			{:else}
+				<p class="text-muted">None selected</p>
+			{/if}
 			<Button outline block color="primary" on:click={toggleAlways}>Edit</Button>
 			<FormText color="muted">Event Preferences help us display events relevant to you</FormText>
 		</FormGroup>
